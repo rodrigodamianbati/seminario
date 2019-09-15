@@ -1,0 +1,98 @@
+package modelos;
+
+import java.time.LocalDate;
+
+public class Inscripcion {
+
+	// Variables
+	private int id;
+	private Concurso concurso;
+	private Participante participante;
+	private LocalDate fechaInscripcion;
+	private int horaInscripcion;
+
+	// Constructores
+	public Inscripcion() {
+	}
+	
+	public int copareTo(Inscripcion inscripcion) {
+		if (this.fueDespues(inscripcion)) {
+			return 1;
+		}
+		else {
+			
+		}
+	}
+
+	private boolean fueDespues(LocalDate fechaInscripcion2) {
+		// TODO Auto-generated method stub
+		return this.fechaInscripcion.isAfter(fechaInscripcion2);
+	}
+
+	public Inscripcion(Concurso concurso, Participante participante, LocalDate fechaInscripcion,
+			int horaInscripcion) {
+		// this.validarInscripcion(concurso, participante);
+		this.concurso = concurso;
+		this.participante = participante;
+		this.fechaInscripcion = fechaInscripcion;
+		this.horaInscripcion = horaInscripcion;
+	}
+
+	public Inscripcion(int id, Concurso concurso, Participante participante, LocalDate fechaInscripcion,
+			int horaInscripcion) {
+		this.id = id;
+		this.concurso = concurso;
+		this.participante = participante;
+		this.horaInscripcion = horaInscripcion;
+		
+	}
+
+	public boolean equals(Inscripcion i) {
+		System.out.println("equals");
+		return (this.participante.equals(i.getParticipante()) && this.concurso.equals(i.getConcurso()));
+	}
+	
+	
+	public boolean esElParticipante(Participante p) {
+		return (this.participante.equals(p));
+	}
+
+	// getters
+	public int getId() {
+		return this.id;
+	}
+
+	public Participante getParticipante() {
+		return this.participante;
+	}
+	
+	public int idParticipante () {
+		return this.participante.getId();
+	}
+
+	public Concurso getConcurso() {
+		return this.concurso;
+	}
+
+	public int idConcurso() {
+		// TODO Auto-generated method stub
+		return this.concurso.getId();
+	}
+	
+	public LocalDate fechaInscripcion() {
+		return this.fechaInscripcion;
+	}
+	
+	public int horaInscripcion() {
+		return this.horaInscripcion;
+	}
+
+	
+	
+
+
+	public boolean esElParticipante(int id_participante) {
+		
+		return (this.participante.getId() == id_participante);
+	}
+}

@@ -1,0 +1,158 @@
+-- Menu principal ---
+principal.titulo =Main Menu
+principal.menu_categoria = Category
+principal.menu_participante = Competitor
+principal.menu_jurado = Jury
+principal.menu_premio = Prize
+principal.menu_concurso = Competition
+
+-- Menu principal: Idioma --
+principal.cambiar_idioma = Change language
+lenguaje.español = Spanish
+lenguaje.ingles = English
+
+-- Publicacion --
+publicacion.agregar = Add publication
+publicacion = Publication
+publicaciones = Publications
+publicacion.exito.agregar = Publication has been successfull registed
+publicaciones.mostrar = Show  publication
+publicacion.exito.buscar = Publications for 
+publicacion.exito.eliminar = PUblication has been succesfull eliminated
+publicacion.evaluar = Evaluate publications
+
+-- Inscripcion --
+inscripcion.titulo = Manage inscription and publications of
+inscripcion.seleccionar = Add
+inscripcion.inscripto = Competition inscript with inscript opening
+inscripcion.agregar = Add inscriptions
+inscripcion.exito.agregar = Inscription has been succesfull registed
+eliminar.inscripcion = Eliminated inscription
+inscripcion.exito.eliminar = Inscription has been succesfull eliminated
+inscripcion.repetida = The inscription exist
+inscripcion.concursos_mostrar = Select at competition that you wanna inscript
+concurso.inscripcion_finalizado = Competition with ending inscription
+concurso.subir_publicacion = Competition with publication opening
+
+-- Puesto --
+puesto.titulo = Position manager of competition 
+puesto.excepcion = Do not forget that you can post the results on twitter!
+puesto.posicion = Position
+puesto.premio = Prize
+puesto.agregar = Add Position
+puesto.repetida = Position existent
+puesto.exito.agregar = Position has been succesfull registered
+puesto.exito.eliminar = Position has been succelfull eliminated
+puesto.asignar = Asing puest at participants
+
+-- Concurso --
+concurso.titulo = Manage competitions
+concurso.fecha_apertura_inscripcion = Opening date inscription
+concurso.fecha_cierre_inscripcion = Ending date inscription
+concurso.fecha_inicio_publicacion = Opening date publication
+concurso.fecha_cierre_publicacion = Ending date publication
+concurso.agregar = Add competition
+concurso.excepcion= Before creating a competition you must register a category
+concurso.exito.agregar = Competition has been successfully registered
+concurso.repetida = Competition existent
+concurso.horaInicioInscripcion = Registration start time
+concurso.horaFinInscripcion = Registration ending time
+concurso.horaInicioPublicacion = Publication start time
+concurso.horaFinPublicacion = Publication ending time
+concurso.exito.eliminar = Competition has been succesfull eliminated
+concurso.exito.modificar = Competition has been successfull modificated
+concurso.repetida = Competition exist with this code
+concurso.corregido = Corrected
+concurso.lista = List competition
+concurso.para_inscribirse = Competitions with opening inscription
+concurso_no_participante = No participants for this compeitition
+concurso.inscribir = Enroll
+
+-- Categoria --
+categoria.titulo = Manage categories
+categoria.agregar = Add category
+listadocategoria.titulo = List categories
+categoria.exito.agregar = The category has been successfully registered
+categoria.exito.eliminar = The category has been successfully eliminated
+categoria.exito.modificar = The category has been successfully modificated
+categoria.repetida = Category existent with this name
+categoria.no_existe = Category no existent
+
+-- Participante --
+participante.titulo = Manage competitors
+participante.agregar = Add competitor
+participante.repetida = Competitor existent with this DNI
+participante.exito.agregar = The competitor has been successfully registered
+listadoparticipante.titulo = List competitors
+participante.exito.eliminar = The competitor has been successfully eliminated
+participante.exito.modificar = The competitor has been successfully modificated
+participante.lista_inscripcion_publicacion = Inscriptions and publications
+volver.participante = Return to competitor window
+participante_publicacion.lista = Publications
+participantes = Competitors
+
+-- Jurado --
+jurado.titulo = Manage jury
+jurado.agregar = Add jury
+jurado.repetida = Jury exist with this name and surename
+jurado.exito.agregar = The jury has been successfully registered
+jurado.lista = List jury
+jurado.exito.eliminar = The competitor has been successfully eliminated
+jurado.exito.modificar = The competitor has benn succesfully modificated
+jurado.seleccionar = Select jury
+
+-- Premio --
+premio.titulo = Manage prize
+premio.agregar = Add prize
+premio.repetida = Prize existent with this name
+premio.exito.agregar = The prize has been successfully registered 
+premio.exito.eliminar = The prize has been successfully eliminated
+premio.exito.modificar = The prize has been successfully modificated
+premio.lista = List prize
+premio.nombre = Name prize
+id.premio = ID prize
+premio.lista = List prize
+
+-- Twitter --
+twittear = Twitt
+
+-- Componentes en comun --
+ver_publicaciones = Publications
+nombre = Name
+error_nombre = Missing the name
+apellido = Surname
+error_apellido = Missing the surname
+email = Email
+error_email = Missing the email
+dni = Dni
+erro_dni = Missing the dni
+principal.administrar = Manage
+volver.principal = Return to the main screen
+id = ID
+modificar = Modification
+eliminar = Delete
+seleccionar.uno = Select a one element
+seleccionar.mucho = Select just a one element
+codigo = Code
+hashtag = Hashtag
+categoria = Category
+volver.concurso = Return to competition window
+vacio.fechaAperturaInscripcion = Enter at date of opening inscription
+vacio.fechaCierreInscripcion = Enter at date of closing inscription
+vacio.fechaAperturaPublicacion = Enter at date of opening publication
+vacio.fechaCierrePublicacion = Enter at date of closing publication
+inscripcion.fecha_inicio = Date opening inscription
+inscripcion.hora_inicio = Hour opening inscription
+inscripcion.fecha_fin = Date ending inscription
+inscripcion.hora_fin = Hour ending inscription
+publicacion.fecha_inicio = Date opening publication
+publicacion.hora_inicio = Hour opening publication
+publicacion.fecha_fin = Date ending publication
+publicacion.hora_fin = Hour ending publication
+listar.puestos_participantes = List prizes and competitors
+id.categoria = ID category
+categoria.nombre = Category
+seleccionar = Select
+texto = Text
+puntaje = Punt
+ver = See more

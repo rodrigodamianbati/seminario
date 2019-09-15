@@ -1,0 +1,9 @@
+package excepciones;
+
+public class ParticipanteExcepciones extends SQLException{
+	
+	 public ParticipanteExcepciones(String errorMessage) {
+	        super(errorMessage);
+	    }
+
+}

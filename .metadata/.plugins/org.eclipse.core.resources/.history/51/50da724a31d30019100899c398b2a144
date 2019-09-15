@@ -1,0 +1,10 @@
+package excepciones;
+
+public class ParticipanteExcepciones extends Exception{
+	
+	 public ParticipanteExcepciones(String errorMessage) {
+	        super(errorMessage);
+	        
+	    }
+
+}

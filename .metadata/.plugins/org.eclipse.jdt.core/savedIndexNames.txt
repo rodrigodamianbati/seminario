@@ -1,0 +1,24 @@
+INDEX VERSION 1.131+/home/bati/eclipse-workspace/.metadata/.plugins/org.eclipse.jdt.core
+1716492610.index
+2763738587.index
+354761329.index
+4103943411.index
+3846099176.index
+1186151415.index
+263973650.index
+2836110828.index
+742454051.index
+3347134986.index
+3664594849.index
+472454297.index
+753391581.index
+3588436457.index
+3637975071.index
+3369800642.index
+646308851.index
+1870120578.index
+363589354.index
+3245747785.index
+2006186813.index
+3658782567.index
+135412501.index

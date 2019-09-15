@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;modelos.Concurso.inscripciones(...)&apos; to &apos;estaInscripto&apos;&#x0A;- Original project: &apos;Back-End&apos;&#x0A;- Original element: &apos;modelos.Concurso.inscripciones(...)&apos;&#x0A;- Renamed element: &apos;modelos.Concurso.estaInscripto(...)&apos;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;inscripciones&apos;" flags="589826" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;modelos{Concurso.java[Concurso~inscripciones~QInscripcion;" name="estaInscripto" references="true" stamp="1557766004855" version="1.0"/>
+</session>

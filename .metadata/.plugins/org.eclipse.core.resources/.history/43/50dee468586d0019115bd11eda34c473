@@ -1,0 +1,4 @@
+url = jdbc:mysql://localhost/concurso
+user = cliente
+password = 1234
+driver = com.mysql.jdbc.Driver

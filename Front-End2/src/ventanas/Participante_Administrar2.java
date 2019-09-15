@@ -1,0 +1,425 @@
+package ventanas;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import api.Api;
+import modelos.Participante;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
+/**
+ * JFrame Pantalla para administrar los participantes.
+ * 
+ * @author Rodrigo Batillier
+ *
+*/
+
+@SuppressWarnings("serial")
+public class Participante_Administrar2 extends JFrame {
+
+	private JPanel contentPane;
+	private ResourceBundle bundle;
+	private JTable table;
+	private DefaultTableModel model;
+	private JTextField nombre;
+	private JTextField apellido;
+	private JTextField dni;
+	private JTextField email;
+	private Api api;
+
+	public Participante_Administrar2(String idioma) {
+		// Creo la api
+		api = new Api();
+		
+		// Creo el bundle
+		bundle = ResourceBundle.getBundle(idioma);
+		
+		setTitle(bundle.getString("participante.titulo"));
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 663, 495);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNombre = new JLabel(bundle.getString("nombre"));
+		lblNombre.setBounds(175, 11, 61, 14);
+		contentPane.add(lblNombre);
+		
+		JLabel lblApellido = new JLabel(bundle.getString("apellido"));
+		lblApellido.setBounds(175, 33, 61, 14);
+		contentPane.add(lblApellido);
+		
+		JLabel lblDni = new JLabel(bundle.getString("dni"));
+		lblDni.setBounds(175, 58, 61, 14);
+		contentPane.add(lblDni);
+		
+		JLabel lblEmail = new JLabel(bundle.getString("email"));
+		lblEmail.setBounds(175, 83, 61, 14);
+		contentPane.add(lblEmail);
+		
+		nombre = new JTextField();
+		nombre.setBounds(256, 8, 181, 20);
+		contentPane.add(nombre);
+		nombre.setColumns(10);
+		
+		apellido = new JTextField();
+		apellido.setBounds(256, 30, 181, 20);
+		contentPane.add(apellido);
+		apellido.setColumns(10);
+		
+		dni = new JTextField();
+		dni.setBounds(256, 55, 181, 20);
+		contentPane.add(dni);
+		dni.setColumns(10);
+		dni.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				char caracter = e.getKeyChar();
+				// Verificar si la tecla pulsada no es un digito
+				if (((caracter < '0') || (caracter > '9')) && (caracter != '\b' /* corresponde a BACK_SPACE */)) {
+					e.consume(); // ignorar el evento de teclado
+				}
+			}
+		});
+		
+		email = new JTextField();
+		email.setBounds(256, 80, 181, 20);
+		contentPane.add(email);
+		email.setColumns(10);
+		
+		JButton btnAgregarParticipante = new JButton(bundle.getString("participante.agregar"));
+		btnAgregarParticipante.setBounds(212, 108, 225, 23);
+		contentPane.add(btnAgregarParticipante);
+		btnAgregarParticipante.addActionListener(e -> guardarParticipante());
+		
+		JButton btnNewButton = new JButton(bundle.getString("volver.principal"));
+		btnNewButton.setToolTipText("");
+		btnNewButton.setBounds(10, 423, 627, 23);
+		contentPane.add(btnNewButton);
+		btnNewButton.addActionListener(e -> dispose() );
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 191, 627, 143);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setCellSelectionEnabled(true);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {},
+			new String[] {
+					bundle.getString("id"), 
+					bundle.getString("nombre"),
+					bundle.getString("apellido"),
+					bundle.getString("dni"),
+					bundle.getString("email"),
+					bundle.getString("modificar"), 
+					bundle.getString("eliminar"),
+					bundle.getString("participante.lista_inscripcion_publicacion")
+			}
+		) {
+			@SuppressWarnings("rawtypes")
+			Class[] columnTypes = new Class[] {
+					Object.class, Object.class, Object.class, Object.class, Object.class, Boolean.class, Boolean.class, Boolean.class
+				};
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+				
+				public boolean isCellEditable(int row, int column) {
+					return column == 0 ? false : true;
+			    }
+			}
+		);
+		model = (DefaultTableModel) table.getModel();
+		table.getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getColumnModel().getColumn(0).setMinWidth(0);
+		table.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+		
+		JLabel lblListaParticipantes = new JLabel(bundle.getString("listadoparticipante.titulo"));
+		lblListaParticipantes.setBounds(256, 166, 143, 14);
+		contentPane.add(lblListaParticipantes);
+		
+		JButton btnNewButton_1 = new JButton(bundle.getString("eliminar"));
+		btnNewButton_1.setBounds(10, 345, 202, 23);
+		contentPane.add(btnNewButton_1);
+		btnNewButton_1.addActionListener(e -> eliminarParticipantes());
+		
+		JButton btnNewButton_2 = new JButton(bundle.getString("modificar"));
+		btnNewButton_2.setBounds(215, 345, 202, 23);
+		contentPane.add(btnNewButton_2);
+		btnNewButton_2.addActionListener(e -> modificarParticipantes());
+		
+		JButton btn = new JButton(bundle.getString("participante.lista_inscripcion_publicacion"));
+		btn.setBounds(427, 346, 210, 23);
+		contentPane.add(btn);
+		btn.addActionListener( e -> agregarInscripciones(idioma));
+		
+		this.listarParticipantes();
+	}
+	
+	/**
+	 * Metodo que devuelve todos los participantes y las muestra en la tabla
+	 */
+	public void listarParticipantes() {
+		try {
+			// Vacio la tabla
+			model.setRowCount(0);
+			
+			// Agrego los participantes a la tabla
+			for (Participante participante: api.listarParticipantes()) {
+				model.addRow(new Object[]{
+					participante.getId(),
+					participante.getNombre(),
+					participante.getApellido(),
+					participante.getDni(),
+					participante.getEmail(),
+					false,
+					false,
+					false
+				});
+			}
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+	}
+
+	/**
+	 * Metodo que guarda un participante en la base de datos
+	 */
+	private void guardarParticipante() {
+		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+			protected void done() {
+				try {
+					String mensajeError = get();
+					JOptionPane.showMessageDialog(null, mensajeError);
+				} catch (InterruptedException | ExecutionException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			protected String doInBackground() {
+				try {			
+					// Si ya existe el participante muestro mensaje
+					if (api.existeParticipante(dni.getText())){
+						return bundle.getString("participante.repetida");
+					}
+					
+					// Creo el participante
+					Participante participante = api.crearParticipante(nombre.getText(), apellido.getText(), dni.getText(), 
+					email.getText());
+					
+					// Guardo el participante en la base de datos
+					api.nuevoParticipante(participante);
+					
+					// Vacio los inputs
+					vaciarInputs();
+					
+					// Agrego el participante en la tabla
+					listarParticipantes();
+					return bundle.getString("participante.exito.agregar");
+				} catch (RuntimeException e) {
+					return e.getMessage();
+				}
+			}
+		};
+		worker.execute();
+	}
+	
+	/**
+	 * Metodo que modifica el participante seleccionado en la base de datos
+	 */
+	private void modificarParticipantes() {
+		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+			protected void done() {
+				try {
+					String mensajeError = get();
+					listarParticipantes();
+					JOptionPane.showMessageDialog(null, mensajeError);
+				} catch (InterruptedException | ExecutionException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			protected String doInBackground() {
+				try {
+					// Variable entera que indica cantidad de checkeados
+					int checkeados = cantidadCheckSeleccionados(5);
+					
+					// Si se selecciono un solo elemento se realiza la operacion
+					if (checkeados == 1) {
+						for (int i = 0; i < model.getRowCount(); i++) {
+							Boolean checked = Boolean.valueOf(table.getValueAt(i, 5).toString());
+							if (checked) {
+								// Si ya existe el participante muestro mensaje
+								if (!api.existeParticipante(dni.getText())){
+									// Creo el participante
+									Participante participante = api.crearParticipante( (int) table.getValueAt(i, 0), 
+											table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(), 
+											table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString());
+									
+									// Modifico el participante
+									api.modificarParticipante(participante);
+									
+									listarParticipantes();
+									return bundle.getString("particpante.exito.modificar");
+								}
+							}
+						}
+						
+						listarParticipantes();
+						return bundle.getString("participante.repetida");
+					} else {
+						// Si selecciono mas de uno o ninguno muestro mensaje
+						if (checkeados > 1) {
+							return bundle.getString("seleccionar.mucho");
+						} 
+						return bundle.getString("seleccionar.uno");
+					}			
+				} catch (RuntimeException e) {
+					return e.getMessage();
+				}
+			}
+		};
+		worker.execute();
+	}
+	
+	/**
+	 * Metodo que elimina el participante seleccionado en la base de datos
+	 */
+	private void eliminarParticipantes() {
+		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+			protected void done() {
+				try {
+					String mensajeError = get();
+					JOptionPane.showMessageDialog(null, mensajeError);
+				} catch (InterruptedException | ExecutionException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			protected String doInBackground() {
+				try {
+					// Variable entera que indica cantidad de checkeados
+					int checkeados = cantidadCheckSeleccionados(6);
+					
+					// Si se selecciono un solo elemento se realiza la operacion
+					if (checkeados == 1) {
+						// Busco el participante a eliminar
+						for (int i = 0; i < model.getRowCount(); i++) {
+							Boolean checked = Boolean.valueOf(table.getValueAt(i, 6).toString());
+							if (checked) {
+								// Elimino el participante en la base de datos
+								api.eliminarParticipante((int) table.getValueAt(i, 0));
+								
+								// Saco el participante de la tabla
+								model.removeRow(i);
+							}
+						}
+						
+						return bundle.getString("participante.exito.eliminar");
+					} else {
+						// Si selecciono mas de uno o ninguno muestro mensaje
+						if (checkeados > 1) {
+							return bundle.getString("seleccionar.mucho");
+						} 
+						return bundle.getString("seleccionar.uno");
+					}		
+					
+				} catch (RuntimeException e) {
+					return e.getMessage();
+				}
+			}
+		};
+		worker.execute();
+	}
+	
+	/**
+	 * Metodo que lista las inscripciones del participante seleccionado
+	 */
+	private void agregarInscripciones(String idioma) {
+		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+			protected void done() {
+				try {
+					String mensajeError = get();
+					JOptionPane.showMessageDialog(null, mensajeError);
+				} catch (InterruptedException | ExecutionException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			protected String doInBackground() {
+				try {
+					int checkeados = cantidadCheckSeleccionados(7);
+					
+					// Si se selecciono un solo elemento se realiza la operacion
+					if (checkeados == 1) {
+						// Busco el participante a mostrar sus 9inscripciones y publicaciones
+						for (int i = 0; i < model.getRowCount(); i++) {
+							Boolean checked = Boolean.valueOf(table.getValueAt(i, 7).toString());
+//							if (checked) {
+//								// Creo la pantalla
+//								Inscripcion_Publicacion_Administrar inscripcion = new Inscripcion_Publicacion_Administrar(idioma,
+//										api.crearParticipante((int) table.getValueAt(i, 0),  table.getValueAt(i, 1).toString(),
+//										table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString(),
+//										table.getValueAt(i, 4).toString()));
+//								inscripcion.setVisible(true);
+//							}
+						}
+						return bundle.getString("inscripcion.concursos_mostrar");
+					} else {
+						// Si no selecciono mas de uno o ninguno muestro mensaje en pantalla
+						if (checkeados > 1) {
+							return bundle.getString("seleccionar.mucho");
+						} else {
+							return bundle.getString("seleccionar.uno");
+						}
+					}
+				} catch (RuntimeException e) {
+					return e.getMessage();
+				}
+			}
+		};
+		worker.execute();
+	}
+	
+	/**
+	 * Metodo que verifica cuantos check selecciono
+	 */
+	private int cantidadCheckSeleccionados(int columna) {
+		int cantidad = 0;
+		for (int i = 0; i < model.getRowCount(); i++) {
+			Boolean checked = Boolean.valueOf(table.getValueAt(i, columna).toString());
+			if (checked) {
+				cantidad++;
+			}
+		}
+		return cantidad;
+	}
+	
+	/**
+	 * Metodo que vacia los inputs
+	 */
+	private void vaciarInputs() {
+		nombre.setText("");
+		apellido.setText("");
+		dni.setText("");
+		email.setText("");
+	}
+}

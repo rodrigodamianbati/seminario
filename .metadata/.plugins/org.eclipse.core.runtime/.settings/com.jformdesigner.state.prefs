@@ -1,0 +1,3 @@
+designer/newcontainer.layoutmanager=net.miginfocom.swing.MigLayout
+designer/newform.superclass=javax.swing.JPanel
+eclipse.preferences.version=1

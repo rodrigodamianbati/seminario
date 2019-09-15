@@ -1,0 +1,19 @@
+package excepciones;
+
+import java.sql.SQLException;
+
+public class ParticipanteExcepciones extends SQLException{
+	
+	 public ParticipanteExcepciones(String errorMessage) {
+	        super(errorMessage);
+	        if (errorMessage.contains("dni")) {
+	        	throw new RuntimeException("este dni ya existe entre los usuarios");
+	        }else {
+	        	if (errorMessage.contains("dni")) {
+	        		throw new RuntimeException("este email ya existe entre los usuarios");
+	        	}
+	        }
+	        	
+	 }
+
+}
