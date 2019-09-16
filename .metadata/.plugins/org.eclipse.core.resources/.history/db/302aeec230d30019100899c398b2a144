@@ -1,7 +1,0 @@
-package excepciones;
-
-public class ParticipanteExcepciones extends Exception{
-	
-	public dniDuplicado
-
-}

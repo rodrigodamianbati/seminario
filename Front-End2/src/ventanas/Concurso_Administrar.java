@@ -292,7 +292,6 @@ public class Concurso_Administrar extends JFrame {
 						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
-				//System.out.println(input);
 				try {
 					if (input == 0) {
 						JTable table = (JTable) e.getSource();
@@ -308,9 +307,23 @@ public class Concurso_Administrar extends JFrame {
 //						// Devuelvo la categoria
 //						Categoria categoria = api.categoria(table.getValueAt(modelRow, 5).toString());
 						
-						// Creo el concurso
-						Concurso concurso = api.crearConcurso(
-								(int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), table.getValueAt(modelRow, 2).toString(), 
+//						// Creo el concurso
+//						Concurso concurso = api.crearConcurso(
+//								(int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), table.getValueAt(modelRow, 2).toString(), 
+//								table.getValueAt(modelRow, 3).toString(), table.getValueAt(modelRow, 5).toString()/*categoria*/,
+//								LocalDate.parse(table.getValueAt(modelRow, 6).toString()),
+//								LocalDate.parse(table.getValueAt(modelRow, 8).toString()),
+//								LocalDate.parse(table.getValueAt(modelRow, 10).toString()),
+//								LocalDate.parse(table.getValueAt(modelRow, 12).toString()),
+//								Integer.parseInt(table.getValueAt(modelRow, 7).toString()), 
+//								Integer.parseInt(table.getValueAt(modelRow, 9).toString()),
+//								Integer.parseInt(table.getValueAt(modelRow, 11).toString()),
+//								Integer.parseInt(table.getValueAt(modelRow, 13).toString()), 
+//								Boolean.valueOf(table.getValueAt(modelRow, 14).toString())
+//						);
+//						// Modifico el concurso
+//						api.modificarConcurso(concurso, table.getValueAt(modelRow, 5).toString());
+						api.modificarConcurso((int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), table.getValueAt(modelRow, 2).toString(), 
 								table.getValueAt(modelRow, 3).toString(), table.getValueAt(modelRow, 5).toString()/*categoria*/,
 								LocalDate.parse(table.getValueAt(modelRow, 6).toString()),
 								LocalDate.parse(table.getValueAt(modelRow, 8).toString()),
@@ -320,12 +333,7 @@ public class Concurso_Administrar extends JFrame {
 								Integer.parseInt(table.getValueAt(modelRow, 9).toString()),
 								Integer.parseInt(table.getValueAt(modelRow, 11).toString()),
 								Integer.parseInt(table.getValueAt(modelRow, 13).toString()), 
-								Boolean.valueOf(table.getValueAt(modelRow, 14).toString())
-						);
-						
-						// Modifico el concurso
-						api.modificarConcurso(concurso, table.getValueAt(modelRow, 5).toString());
-						listarConcursos();
+								Boolean.valueOf(table.getValueAt(modelRow, 14).toString()));
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
@@ -350,17 +358,33 @@ public class Concurso_Administrar extends JFrame {
 						JTable table = (JTable) e.getSource();
 						int modelRow = Integer.valueOf(e.getActionCommand());
 						
-						Categoria categoria = api.crearCategoria((int) table.getValueAt(modelRow, 4), table.getValueAt(modelRow, 5).toString());
-						Concurso concurso = api.crearConcurso(
-								(int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(),
-								table.getValueAt(modelRow, 2).toString(), table.getValueAt(modelRow, 3).toString(), 
-								categoria, LocalDate.parse(table.getValueAt(modelRow, 6).toString()),
-								LocalDate.parse(table.getValueAt(modelRow, 8).toString()), 
-								LocalDate.parse(table.getValueAt(modelRow, 10).toString()),
-								LocalDate.parse(table.getValueAt(modelRow, 12).toString()),
-								(int) table.getValueAt(modelRow, 7), (int) table.getValueAt(modelRow, 9), (int) table.getValueAt(modelRow, 11), 
-								(int) table.getValueAt(modelRow, 13), Boolean.valueOf(table.getValueAt(modelRow, 14).toString())
-						);
+//						Categoria categoria = api.crearCategoria((int) table.getValueAt(modelRow, 4), table.getValueAt(modelRow, 5).toString());
+//						Concurso concurso = api.crearConcurso(
+//								(int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(),
+//								table.getValueAt(modelRow, 2).toString(), table.getValueAt(modelRow, 3).toString(), 
+//								categoria, LocalDate.parse(table.getValueAt(modelRow, 6).toString()),
+//								LocalDate.parse(table.getValueAt(modelRow, 8).toString()), 
+//								LocalDate.parse(table.getValueAt(modelRow, 10).toString()),
+//								LocalDate.parse(table.getValueAt(modelRow, 12).toString()),
+//								(int) table.getValueAt(modelRow, 7), (int) table.getValueAt(modelRow, 9), (int) table.getValueAt(modelRow, 11), 
+//								(int) table.getValueAt(modelRow, 13), Boolean.valueOf(table.getValueAt(modelRow, 14).toString())
+//						);
+//						Puesto_Administrar puesto = new Puesto_Administrar(api, idioma, concurso);
+						
+//						Categoria categoria = api.crearCategoria((int) table.getValueAt(modelRow, 4), table.getValueAt(modelRow, 5).toString());
+//						Concurso concurso = api.crearConcurso(
+//								(int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(),
+//								table.getValueAt(modelRow, 2).toString(), table.getValueAt(modelRow, 3).toString(), 
+//								(int) table.getValueAt(modelRow, 4), LocalDate.parse(table.getValueAt(modelRow, 6).toString()),
+//								LocalDate.parse(table.getValueAt(modelRow, 8).toString()), 
+//								LocalDate.parse(table.getValueAt(modelRow, 10).toString()),
+//								LocalDate.parse(table.getValueAt(modelRow, 12).toString()),
+//								(int) table.getValueAt(modelRow, 7), (int) table.getValueAt(modelRow, 9), (int) table.getValueAt(modelRow, 11), 
+//								(int) table.getValueAt(modelRow, 13), Boolean.valueOf(table.getValueAt(modelRow, 14).toString())
+//						);
+						
+						Concurso concurso = api.concurso(table.getValueAt(modelRow, 5).toString());
+						
 						Puesto_Administrar puesto = new Puesto_Administrar(api, idioma, concurso);
 						puesto.setVisible(true);
 //					}
@@ -407,7 +431,8 @@ public class Concurso_Administrar extends JFrame {
 					bundle.getString("listar.puestos_participantes"),
 					bundle.getString("modificar"),
 					bundle.getString("eliminar")
-				});		
+				});
+				
 			}
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());

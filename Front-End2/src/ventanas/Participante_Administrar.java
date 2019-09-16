@@ -247,8 +247,8 @@ public class Participante_Administrar extends JFrame {
 
 		AbstractAction delete = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar este participante",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("participante.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -274,8 +274,8 @@ public class Participante_Administrar extends JFrame {
 
 		AbstractAction modificar = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea modificar este participante",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("participante.desea_modificar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -285,14 +285,20 @@ public class Participante_Administrar extends JFrame {
 						int modelRow = Integer.valueOf(e.getActionCommand());
 
 						// Creo el participante
-						Participante participante = api.crearParticipante((int) table.getValueAt(modelRow, 0),
-								table.getValueAt(modelRow, 1).toString(), table.getValueAt(modelRow, 2).toString(),
-								table.getValueAt(modelRow, 3).toString(), table.getValueAt(modelRow, 4).toString());
-
-						System.out.println(participante);
+//						Participante participante = api.crearParticipante((int) table.getValueAt(modelRow, 0),
+//								table.getValueAt(modelRow, 1).toString(), table.getValueAt(modelRow, 2).toString(),
+//								table.getValueAt(modelRow, 3).toString(), table.getValueAt(modelRow, 4).toString());
+//
+//						System.out.println(participante);
+						
+//						Participante participante = api.crearParticipante();
+//
+//						System.out.println(participante);
 
 						// Modifico el participante
-						api.modificarParticipante(participante);
+						api.modificarParticipante((int) table.getValueAt(modelRow, 0),
+								table.getValueAt(modelRow, 1).toString(), table.getValueAt(modelRow, 2).toString(),
+								table.getValueAt(modelRow, 3).toString(), table.getValueAt(modelRow, 4).toString());
 						JOptionPane.showMessageDialog(null, bundle.getString("participante.exito.modificar"));
 
 					}
@@ -309,8 +315,8 @@ public class Participante_Administrar extends JFrame {
 
 		AbstractAction eliminarInscripcion = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar esta inscripcion",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("inscripcion.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -343,8 +349,8 @@ public class Participante_Administrar extends JFrame {
 		
 		AbstractAction inscribir = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea inscribir a este participante?",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("inscripcion.desea_inscribir"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -595,12 +601,14 @@ public class Participante_Administrar extends JFrame {
 					}
 
 					// Creo el participante
-					Participante participante = api.crearParticipante(nombre.getText(), apellido.getText(),
-							dni.getText(), email.getText());
+//					Participante participante = api.crearParticipante(nombre.getText(), apellido.getText(),
+//							dni.getText(), email.getText());
 
 					// Guardo el participante en la base de datos
-					api.nuevoParticipante(participante);
+//					api.nuevoParticipante(participante);
 
+					api.nuevoParticipante(nombre.getText(), apellido.getText(),
+							dni.getText(), email.getText());
 					// Vacio los inputs
 					vaciarInputs();
 
@@ -615,153 +623,153 @@ public class Participante_Administrar extends JFrame {
 		worker.execute();
 	}
 
-	/**
-	 * Metodo que modifica el participante seleccionado en la base de datos
-	 */
-	private void modificarParticipantes() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					listarParticipantes();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-
-					// Si ya existe el participante muestro mensaje
-					if (!api.existeParticipante(dni.getText())) {
-						// Creo el participante
-//									Participante participante = api.crearParticipante( (int) table.getValueAt(i, 0), 
-//											table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(), 
-//											table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString());
-//									
-//									// Modifico el participante
-//									api.modificarParticipante(participante);
-//									
-//									listarParticipantes();
-//									return bundle.getString("particpante.exito.modificar");
-					}
-
-					listarParticipantes();
-					return bundle.getString("participante.repetida");
-
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		JTable table = (JTable) e.getSource();
-		int modelRow = Integer.valueOf(e.getActionCommand());
-		((DefaultTableModel) table.getModel()).removeRow(modelRow);
-	}
-
-	/**
-	 * Metodo que elimina el participante seleccionado en la base de datos
-	 */
-	private void eliminarParticipantes() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cantidad de checkeados
-					int checkeados = cantidadCheckSeleccionados(6);
-
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						// Busco el participante a eliminar
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 6).toString());
-							if (checked) {
-								// Elimino el participante en la base de datos
-								api.eliminarParticipante((int) table.getValueAt(i, 0));
-
-								// Saco el participante de la tabla
-								model.removeRow(i);
-							}
-						}
-
-						return bundle.getString("participante.exito.eliminar");
-					} else {
-						// Si selecciono mas de uno o ninguno muestro mensaje
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						}
-						return bundle.getString("seleccionar.uno");
-					}
-
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-
-	/**
-	 * Metodo que lista las inscripciones del participante seleccionado
-	 */
-	private void agregarInscripciones(String idioma) {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					int checkeados = cantidadCheckSeleccionados(7);
-
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						// Busco el participante a mostrar sus 9inscripciones y publicaciones
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 7).toString());
+//	/**
+//	 * Metodo que modifica el participante seleccionado en la base de datos
+//	 */
+//	private void modificarParticipantes() {
+//		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+//			protected void done() {
+//				try {
+//					String mensajeError = get();
+//					listarParticipantes();
+//					JOptionPane.showMessageDialog(null, mensajeError);
+//				} catch (InterruptedException | ExecutionException e) {
+//					throw new RuntimeException(e);
+//				}
+//			}
+//
+//			protected String doInBackground() {
+//				try {
+//
+//					// Si ya existe el participante muestro mensaje
+//					if (!api.existeParticipante(dni.getText())) {
+//						// Creo el participante
+////									Participante participante = api.crearParticipante( (int) table.getValueAt(i, 0), 
+////											table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(), 
+////											table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString());
+////									
+////									// Modifico el participante
+////									api.modificarParticipante(participante);
+////									
+////									listarParticipantes();
+////									return bundle.getString("particpante.exito.modificar");
+//					}
+//
+//					listarParticipantes();
+//					return bundle.getString("participante.repetida");
+//
+//				} catch (RuntimeException e) {
+//					return e.getMessage();
+//				}
+//			}
+//		};
+//		worker.execute();
+//	}
+//
+//	public void actionPerformed(ActionEvent e) {
+//		JTable table = (JTable) e.getSource();
+//		int modelRow = Integer.valueOf(e.getActionCommand());
+//		((DefaultTableModel) table.getModel()).removeRow(modelRow);
+//	}
+//
+//	/**
+//	 * Metodo que elimina el participante seleccionado en la base de datos
+//	 */
+//	private void eliminarParticipantes() {
+//		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+//			protected void done() {
+//				try {
+//					String mensajeError = get();
+//					JOptionPane.showMessageDialog(null, mensajeError);
+//				} catch (InterruptedException | ExecutionException e) {
+//					throw new RuntimeException(e);
+//				}
+//			}
+//
+//			protected String doInBackground() {
+//				try {
+//					// Variable entera que indica cantidad de checkeados
+//					int checkeados = cantidadCheckSeleccionados(6);
+//
+//					// Si se selecciono un solo elemento se realiza la operacion
+//					if (checkeados == 1) {
+//						// Busco el participante a eliminar
+//						for (int i = 0; i < model.getRowCount(); i++) {
+//							Boolean checked = Boolean.valueOf(table.getValueAt(i, 6).toString());
 //							if (checked) {
-//								// Creo la pantalla
-//								Inscripcion_Publicacion_Administrar inscripcion = new Inscripcion_Publicacion_Administrar(idioma,
-//										api.crearParticipante((int) table.getValueAt(i, 0),  table.getValueAt(i, 1).toString(),
-//										table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString(),
-//										table.getValueAt(i, 4).toString()));
-//								inscripcion.setVisible(true);
+//								// Elimino el participante en la base de datos
+//								api.eliminarParticipante((int) table.getValueAt(i, 0));
+//
+//								// Saco el participante de la tabla
+//								model.removeRow(i);
 //							}
-						}
-						return bundle.getString("inscripcion.concursos_mostrar");
-					} else {
-						// Si no selecciono mas de uno o ninguno muestro mensaje en pantalla
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						} else {
-							return bundle.getString("seleccionar.uno");
-						}
-					}
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
+//						}
+//
+//						return bundle.getString("participante.exito.eliminar");
+//					} else {
+//						// Si selecciono mas de uno o ninguno muestro mensaje
+//						if (checkeados > 1) {
+//							return bundle.getString("seleccionar.mucho");
+//						}
+//						return bundle.getString("seleccionar.uno");
+//					}
+//
+//				} catch (RuntimeException e) {
+//					return e.getMessage();
+//				}
+//			}
+//		};
+//		worker.execute();
+//	}
+//
+//	/**
+//	 * Metodo que lista las inscripciones del participante seleccionado
+//	 */
+//	private void agregarInscripciones(String idioma) {
+//		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+//			protected void done() {
+//				try {
+//					String mensajeError = get();
+//					JOptionPane.showMessageDialog(null, mensajeError);
+//				} catch (InterruptedException | ExecutionException e) {
+//					throw new RuntimeException(e);
+//				}
+//			}
+//
+//			protected String doInBackground() {
+//				try {
+//					int checkeados = cantidadCheckSeleccionados(7);
+//
+//					// Si se selecciono un solo elemento se realiza la operacion
+//					if (checkeados == 1) {
+//						// Busco el participante a mostrar sus 9inscripciones y publicaciones
+//						for (int i = 0; i < model.getRowCount(); i++) {
+//							Boolean checked = Boolean.valueOf(table.getValueAt(i, 7).toString());
+////							if (checked) {
+////								// Creo la pantalla
+////								Inscripcion_Publicacion_Administrar inscripcion = new Inscripcion_Publicacion_Administrar(idioma,
+////										api.crearParticipante((int) table.getValueAt(i, 0),  table.getValueAt(i, 1).toString(),
+////										table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString(),
+////										table.getValueAt(i, 4).toString()));
+////								inscripcion.setVisible(true);
+////							}
+//						}
+//						return bundle.getString("inscripcion.concursos_mostrar");
+//					} else {
+//						// Si no selecciono mas de uno o ninguno muestro mensaje en pantalla
+//						if (checkeados > 1) {
+//							return bundle.getString("seleccionar.mucho");
+//						} else {
+//							return bundle.getString("seleccionar.uno");
+//						}
+//					}
+//				} catch (RuntimeException e) {
+//					return e.getMessage();
+//				}
+//			}
+//		};
+//		worker.execute();
+//	}
 
 	/**
 	 * Metodo que verifica cuantos check selecciono

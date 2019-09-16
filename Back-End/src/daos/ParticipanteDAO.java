@@ -131,7 +131,7 @@ public class ParticipanteDAO implements IParticipante {
 	 * @throws ParticipanteExcepcion 
 	 * 
 	 */
-	public void modificar(Participante participante) throws ParticipanteExcepcion{
+	public void modificar(Participante participante){
 		ConexionDB conexion_db = new ConexionDB();
 		try (Connection connect = conexion_db.obtenerConexionBD();
 				PreparedStatement statement = connect.prepareStatement(this.modificar + participante.getId())) {
@@ -141,7 +141,12 @@ public class ParticipanteDAO implements IParticipante {
 			statement.setString(4, participante.getEmail());
 			statement.executeUpdate();
 		} catch (SQLException ex) {
-				throw new ParticipanteExcepcion(ex.getMessage());
+			if(ex.getMessage().contains("dni")) {
+				throw new RuntimeException("Ya existe un participante con este dni");
+			}else
+				if (ex.getMessage().contains("email")) {
+					throw new RuntimeException("Ya existe un participante con este email");
+				}
 		}
 	}
 

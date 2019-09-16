@@ -15,4 +15,6 @@ public interface IJurado {
 	public void modificar(Jurado jurado);
 	
 	public void eliminar(int id);
+
+	public Jurado jurado(int id_jurado);
 }

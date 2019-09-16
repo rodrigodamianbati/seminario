@@ -3,6 +3,7 @@ package interfaces;
 import java.util.List;
 
 import modelos.Concurso;
+import modelos.Inscripcion;
 
 public interface IConcurso {
 
@@ -28,13 +29,13 @@ public interface IConcurso {
 
 	public boolean estadoConcurso(Concurso concurso);
 
-	public Concurso concurso(int concursoCodigo);
-
-	public void nuevaInscripcion(Concurso concurso);
+//	public Concurso concurso(int concursoCodigo);
 
 	public Concurso concurso(String concurso);
 
 	public Concurso concursoDadoId(int id_concurso);
+
+	void nuevaInscripcion(Inscripcion inscripcion);
 
 	
 }

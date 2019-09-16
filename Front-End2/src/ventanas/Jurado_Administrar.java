@@ -141,8 +141,8 @@ public class Jurado_Administrar extends JFrame {
 		
 		AbstractAction eliminar = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar este jurado?",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("jurado.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -169,8 +169,8 @@ public class Jurado_Administrar extends JFrame {
 		
 		AbstractAction modificar = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea modificar este jurado?",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("jurado.desea_modificar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -179,11 +179,12 @@ public class Jurado_Administrar extends JFrame {
 						JTable table = (JTable) e.getSource();
 						int modelRow = Integer.valueOf(e.getActionCommand());
 						
-						Jurado jurado = api.crearJurado( (int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), 
-								table.getValueAt(modelRow, 2).toString() );
+//						Jurado jurado = api.crearJurado( (int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), 
+//								table.getValueAt(modelRow, 2).toString() );
 						
 						// Modifico el jurado
-						api.modificarJurado(jurado);
+						api.modificarJurado((int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), 
+								table.getValueAt(modelRow, 2).toString());
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
@@ -211,8 +212,8 @@ public class Jurado_Administrar extends JFrame {
 					jurado.getId(),
 					jurado.getNombre(),
 					jurado.getApellido(),
-					"modificar",
-					"eliminar"
+					bundle.getString("modificar"),
+					bundle.getString("eliminar")
 				});
 			}
 		} catch(Exception e) {
@@ -237,16 +238,16 @@ public class Jurado_Administrar extends JFrame {
 			protected String doInBackground() {
 				try {			
 					// Si el jurado existe muestro mensaje en pantalla
-					if (api.existeJurado(nombre.getText(), apellido.getText())){
-						return bundle.getString("jurado.repetida");
-					}
+//					if (api.existeJurado(nombre.getText(), apellido.getText())){
+//						return bundle.getString("jurado.repetida");
+//					}
 					
 					// Creo el jurado
 					Jurado jurado = api.crearJurado(nombre.getText(), apellido.getText());
 					
 					// Guardo el jurado en la base de datos
-					api.guardarJurado(jurado);
-					
+//					api.guardarJurado(jurado);
+					api.guardarJurado(nombre.getText(), apellido.getText());
 					// Vacio los inputs
 					nombre.setText("");
 					apellido.setText("");

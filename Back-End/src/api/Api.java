@@ -32,6 +32,7 @@ import modelos.Premio;
 import modelos.Publicacion;
 import modelos.Puesto;
 
+
 public class Api {
 	
 	// ================================================================
@@ -181,6 +182,25 @@ public class Api {
 		return participante;
 	}
 	
+	public Participante nuevoParticipante(String nombre, String apellido, String dni, String email) {
+		IParticipante participanteDAO = new ParticipanteDAO();
+		
+		Participante participante = new Participante(nombre, apellido, dni, email);
+		participanteDAO.insertar(participante);
+		return participante;
+	}
+	
+
+	
+	public void modificarParticipante(int id, String nombre, String apellido, String dni, String email) {
+		// TODO Auto-generated method stub
+		IParticipante participanteDAO = new ParticipanteDAO();
+		Participante participante = new Participante(id, nombre, apellido, dni, email);
+		
+		participanteDAO.modificar(participante);
+		
+	}
+	
 	/**
 	 * Metodo para la creacion de un participante con nombre, apellido, email, dni e id.
 	 * 
@@ -308,12 +328,9 @@ public class Api {
 	 */
 	public void modificarParticipante(Participante participante) {
 		IParticipante participante_dao = new ParticipanteDAO();
-		try {
+	
 			participante_dao.modificar(participante);
-		} catch (ParticipanteExcepcion e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		
 	}
 	
@@ -359,6 +376,8 @@ public class Api {
 		return jurado;
 	}
 	
+	
+	
 	/**
 	 * Metodo que devuelve verdadero si existe un jurado con ese nombre y apellido en la base de datos
 	 * 
@@ -375,6 +394,12 @@ public class Api {
 			return true;
 		}
 		return false;
+	}
+	
+	public void guardarJurado(String nombre, String apellido) {
+		Jurado jurado = new Jurado(nombre, apellido);
+		IJurado jurado_dao = new JuradoDAO();
+		jurado_dao.insertar(jurado);
 	}
 	
 	/**
@@ -420,6 +445,12 @@ public class Api {
 	public void modificarJurado(Jurado jurado) {
 		IJurado jurado_dao = new JuradoDAO();
 		jurado_dao.modificar(jurado);
+	}
+	
+	public void modificarJurado(int id_jurado, String nombre, String apellido) {
+		IJurado juradoDAO = new JuradoDAO();
+		Jurado jurado = juradoDAO.jurado(id_jurado);
+		juradoDAO.modificar(jurado);
 	}
 	
 	// ================================================================
@@ -1037,20 +1068,20 @@ public class Api {
 		return concursoDAO.estadoConcurso(concurso);
 	}
 
-	public void inscribirParticipante(int concursoCodigo, Participante participante) {
-		
-		IConcurso concursoDAO = new ConcursoDAO();
-		Concurso concurso = concursoDAO.concurso(concursoCodigo);
-		
-		concurso.inscribirParticipante(participante);
-		concursoDAO.nuevaInscripcion(concurso);
-	}
+//	public void inscribirParticipante(int concursoCodigo, Participante participante) {
+//		
+//		IConcurso concursoDAO = new ConcursoDAO();
+//		Concurso concurso = concursoDAO.concurso(concursoCodigo);
+//		
+//		concurso.inscribirParticipante(participante);
+//		concursoDAO.nuevaInscripcion(concurso);
+//	}
 
 	public void nuevaPublicacion(int concursoCodigo, Participante participante, String text) {
 		
 		Publicacion publicacion = new Publicacion(text);
 		IConcurso concursoDAO = new ConcursoDAO();
-		Concurso concurso = concursoDAO.concurso(concursoCodigo);
+		Concurso concurso = concursoDAO.concursoDadoId(concursoCodigo);
 		
 		concurso.agregarNuevaPublicacion(participante, publicacion);
 		
@@ -1073,24 +1104,26 @@ public class Api {
 		inscripcion_dao.eliminar(id_participante, concurso);
 	}
 
-	public void inscribirParticipante(String concursoNombre, Participante participante) {
-		// TODO Auto-generated method stub
-		
-			
-			IConcurso concursoDAO = new ConcursoDAO();
-			Concurso concurso = concursoDAO.concurso(concursoNombre);
-			
-			concurso.inscribirParticipante(participante);
-			concursoDAO.nuevaInscripcion(concurso);
-		
-	}
+//	public void inscribirParticipante(String concursoNombre, Participante participante) {
+//		// TODO Auto-generated method stub
+//		
+//			
+//			IConcurso concursoDAO = new ConcursoDAO();
+//			Concurso concurso = concursoDAO.concurso(concursoNombre);
+//			
+//			concurso.inscribirParticipante(participante);
+//			concursoDAO.nuevaInscripcion(concurso);
+//		
+//	}
 
-	public void inscribirParticipante(String selectedItem, int id) {
-		IParticipante participanteDAO = new ParticipanteDAO();
-		Participante participante = participanteDAO.participante(id);
-//		Participante participante = new Participante(id, nombre, apellido, dni, email);
-		// TODO Auto-generated method stub
+	public void inscribirParticipante(String codigoConcurso, int id_participante) {
 		
+		IParticipante participanteDAO = new ParticipanteDAO();
+		Participante participante = participanteDAO.participante(id_participante);
+		IConcurso concursoDAO = new ConcursoDAO();
+		Concurso concurso = concursoDAO.concurso(codigoConcurso);
+		concurso.inscribirParticipante(participante);
+		concursoDAO.nuevaInscripcion(concurso.ultimoInscripto());
 	}
 
 	public Concurso crearConcurso(int id, String codigo, String nombre, String hashtag, String nombreCategoria,
@@ -1106,7 +1139,51 @@ public class Api {
 		return concurso;
 	}
 
-//	int id, String codigo, String nombre, String hashtag, Categoria categoria, LocalDate fechaInicioInscripcion,
-//	LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion,
-//	int horaFinInscripcion, int horaInicioPublicacion, int horaFinPublicacion, boolean corregido
+	public void modificarConcurso(int id, String codigo, String nombre, String hashtag, String nombreCategoria,
+			LocalDate fechaInicioInscripcion, LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion, int horaFinInscripcion,
+			int horaInicioPublicacion, int horaFinPublicacion, Boolean estado) {
+		// TODO Auto-generated method stub
+		IConcurso concursoDAO = new ConcursoDAO();
+		Concurso concurso = concursoDAO.concursoDadoId(id);
+		
+		ICategoria categoriaDAO = new CategoriaDAO();
+		Categoria categoria = categoriaDAO.categoria(nombreCategoria);
+		
+		concurso.setCodigo(codigo);
+		concurso.setNombre(nombre);
+		concurso.setHashtag(hashtag);
+		concurso.setCategoria(categoria);
+		concurso.setAperturaInscripcion(fechaInicioInscripcion);
+		concurso.setCierreInscripcion(fechaCierreInscripcion);
+		concurso.setAperturaPublicacion(fechaInicioPublicacion);
+		concurso.setCierrePublicacion(fechaCierrePublicacion);
+		concurso.setHoraAperturaInscripcion(horaInicioInscripcion);
+		concurso.setHoraFinInscripcion(horaFinInscripcion);
+		concurso.setHoraAperturaPublicacion(horaInicioPublicacion);
+		concurso.setHoraFinPublicacion(horaFinPublicacion);
+//		concurso.setCorregido(estado);
+		concursoDAO.modificar(concurso);
+		
+	}
+
+	public Concurso concurso(String codigo) {
+		// TODO Auto-generated method stub
+		IConcurso concursoDAO = new ConcursoDAO();
+		Concurso concurso = concursoDAO.concurso(codigo);
+		return concurso;
+	}
+
+	
+
+	
+
+	
+
+//	public Puesto_Administrar puesto_administrar(Api api, String idioma, int valueAt) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
+	
+
 }

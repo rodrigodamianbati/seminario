@@ -17,7 +17,7 @@ public interface IParticipante {
 
 	public boolean verificarExistente(String dni);
 	
-	public void modificar(Participante participante) throws ParticipanteExcepcion;
+	public void modificar(Participante participante);
 	
 	public void eliminar(int id);
 

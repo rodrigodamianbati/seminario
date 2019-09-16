@@ -27,6 +27,7 @@ public class Concurso {
 	private List<Inscripcion> inscripciones = new ArrayList<Inscripcion>();
 	private List<Publicacion> publicaciones = new ArrayList<Publicacion>();
 	private List<Jurado> jurado = new ArrayList<Jurado>();
+	private Inscripcion ultimoInscripto;
 
 	/* constructores */
 	public Concurso() { }
@@ -225,6 +226,7 @@ public class Concurso {
 		if (!this.estaInscripto(p)) {
 			Inscripcion inscripcion = new Inscripcion (this, p, LocalDate.now(), LocalDateTime.now().getHour());
 			this.inscripciones.add(inscripcion);
+			this.ultimoInscripto = inscripcion;
 		}else {
 			throw new RuntimeException("Este participante ya se encuentra inscripto en este concurso");
 		}
@@ -238,13 +240,13 @@ public class Concurso {
 	 */
 	
 	private boolean estaInscripto(Participante participante) {
-		boolean repetido = false;
+		
 		for (Inscripcion inscripcion : inscripciones) {
 			if (inscripcion.esElParticipante(participante)) {
 				return true;
 			}
 		}
-		return repetido;
+		return false;
 	}
 	
 	
@@ -406,22 +408,22 @@ public class Concurso {
 		this.publicaciones = publicaciones;
 	}
 	
-	public Inscripcion ultimoInscripto() {
-		if (this.inscripciones.isEmpty()) {
-			throw new RuntimeException("No se encuentra ningun inscripto");
-		}
-		Inscripcion ultimoInscripto = new Inscripcion();
-		LocalDate ultimaFecha = this.aperturaInscripcion;
-		for (Inscripcion inscripcion : inscripciones) {
-			if (ultimaFecha.isBefore(inscripcion.fechaInscripcion())) {
-				ultimoInscripto = inscripcion;
-				ultimaFecha = inscripcion.fechaInscripcion();//falta hora
-				
-			}
-		}
-		
-		return ultimoInscripto;
-	}
+//	public Inscripcion ultimoInscripto() {
+//		if (this.inscripciones.isEmpty()) {
+//			throw new RuntimeException("No se encuentra ningun inscripto");
+//		}
+//		Inscripcion ultimoInscripto = new Inscripcion();
+//		LocalDate ultimaFecha = this.aperturaInscripcion;
+//		for (Inscripcion inscripcion : inscripciones) {
+//			if (ultimaFecha.isBefore(inscripcion.fechaInscripcion())) {
+//				ultimoInscripto = inscripcion;
+//				ultimaFecha = inscripcion.fechaInscripcion();//falta hora
+//				
+//			}
+//		}
+//		
+//		return ultimoInscripto;
+//	}
 
 	public Publicacion ultimaPublicacion() {
 	
@@ -472,6 +474,74 @@ public class Concurso {
 				publicacion.evaluar();
 			}
 		}
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
+
+	public void setAperturaInscripcion(LocalDate aperturaInscripcion) {
+		this.aperturaInscripcion = aperturaInscripcion;
+	}
+
+	public void setCierreInscripcion(LocalDate cierreInscripcion) {
+		this.cierreInscripcion = cierreInscripcion;
+	}
+
+	public void setAperturaPublicacion(LocalDate aperturaPublicacion) {
+		this.aperturaPublicacion = aperturaPublicacion;
+	}
+
+	public void setCierrePublicacion(LocalDate cierrePublicacion) {
+		this.cierrePublicacion = cierrePublicacion;
+	}
+
+	public void setHoraAperturaInscripcion(int horaAperturaInscripcion) {
+		this.horaAperturaInscripcion = horaAperturaInscripcion;
+	}
+
+	public void setHoraFinInscripcion(int horaFinInscripcion) {
+		this.horaFinInscripcion = horaFinInscripcion;
+	}
+
+	public void setHoraAperturaPublicacion(int horaAperturaPublicacion) {
+		this.horaAperturaPublicacion = horaAperturaPublicacion;
+	}
+
+	public void setHoraFinPublicacion(int horaFinPublicacion) {
+		this.horaFinPublicacion = horaFinPublicacion;
+	}
+
+	public void setHashtag(String hashtag) {
+		this.hashtag = hashtag;
+	}
+
+	public void setCorregido(boolean corregido) {
+		this.corregido = corregido;
+	}
+
+	public void setPuestos(List<Puesto> puestos) {
+		this.puestos = puestos;
+	}
+
+	public void setUltimoInscripto(Inscripcion ultimoInscripto) {
+		this.ultimoInscripto = ultimoInscripto;
+	}
+
+	public Inscripcion ultimoInscripto() {
+		return this.ultimoInscripto;
 	}
 	
 	public String toString() {
