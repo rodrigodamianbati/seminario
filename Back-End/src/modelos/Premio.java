@@ -45,4 +45,9 @@ public class Premio {
 	public String getNombre() {
 		return this.nombre;
 	}
+
+	public void setNombre(String nombre2) {
+		// TODO Auto-generated method stub
+		this.nombre = nombre2;
+	}
 }

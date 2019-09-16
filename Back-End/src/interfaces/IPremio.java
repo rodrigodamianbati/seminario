@@ -15,4 +15,8 @@ public interface IPremio {
 	public void modificar(Premio premio);
 	
 	public void eliminar(int id);
+
+	public Premio premio(int id);
+
+	public Premio premio(String nombre);
 }

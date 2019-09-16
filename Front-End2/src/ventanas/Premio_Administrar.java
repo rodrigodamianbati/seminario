@@ -126,8 +126,8 @@ public class Premio_Administrar extends JFrame {
 		
 		AbstractAction modificar = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea modificar este premio?",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("premio.desea_modificar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -136,10 +136,13 @@ public class Premio_Administrar extends JFrame {
 						JTable table = (JTable) e.getSource();
 						int modelRow = Integer.valueOf(e.getActionCommand());
 						
-						Premio premio = api.crearPremio( (int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString() );
+//						Premio premio = api.crearPremio( (int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString() );
+//						// Modifico el premio
+//						api.modificarPremio(premio);
 						
+						Premio premio = api.modificarPremio( (int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString() );
 						// Modifico el premio
-						api.modificarPremio(premio);
+//						api.modificarPremio(premio);
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
@@ -154,8 +157,8 @@ public class Premio_Administrar extends JFrame {
 		
 		AbstractAction eliminar = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar este premio?",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("premio.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 				System.out.println(input);
@@ -219,16 +222,12 @@ public class Premio_Administrar extends JFrame {
 
 			protected String doInBackground() {
 				try {		
-					// Si el premio exite muestro mensaje
-					if (api.existePremio(nombre.getText())){
-						return bundle.getString("premio.repetida");
-					}
 					
 					// Creo el premio a guardar
 					Premio premio = api.crearPremio(nombre.getText());
 					
-					// Guardo el premio en la base de datos
-					api.nuevoPremio(premio);
+//					// Guardo el premio en la base de datos
+//					api.nuevoPremio(premio);
 					
 					// Vacio los inputs
 					nombre.setText("");

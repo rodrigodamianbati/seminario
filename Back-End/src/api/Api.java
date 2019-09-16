@@ -467,7 +467,10 @@ public class Api {
 	* 
 	*/
 	public Premio crearPremio(String nombre) {
+		IPremio premio_dao = new PremioDAO();
 		Premio premio = new Premio(nombre);
+		premio_dao.insertar(premio);
+		premio = premio_dao.premio(nombre);
 		return premio;
 	}
 		
@@ -484,10 +487,29 @@ public class Api {
 	* 
 	*/
 	public Premio crearPremio(int id, String nombre) {
-		Premio premio = new Premio(id, nombre);
+		IPremio premio_dao = new PremioDAO();
+		Premio premio = new Premio(id,nombre);
+		premio_dao.insertar(premio);
+//		premio_dao.insertar(premio);
+//		Premio premio = premio_dao.premio(id);
+//		Premio premio = new Premio(id, nombre);
 		return premio;
 	}
-		
+	
+	public Premio modificarPremio(int id, String nombre) {
+		IPremio premio_dao = new PremioDAO();
+//		premio_dao.insertar(premio);
+		Premio premio = premio_dao.premio(id);
+		premio.setNombre(nombre);
+		premio_dao.modificar(premio);
+//		Premio premio = new Premio(id, nombre);
+		return premio;
+	}
+	
+//	public Premio modificarPremio(int valueAt, String string) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	/**
 	* Metodo para la persistencia de un premio en la base de datos.
 	* 
@@ -808,7 +830,10 @@ public class Api {
 	 * 
 	 */
 	public Puesto crearPuesto(String posicion, Concurso concurso, Premio premio) {
+
 		Puesto puesto = new Puesto(posicion, concurso, premio);
+		IPuesto puesto_dao = new PuestoDAO();
+		puesto_dao.insertar(puesto);
 		return puesto;
 	}
 	
@@ -1172,6 +1197,8 @@ public class Api {
 		Concurso concurso = concursoDAO.concurso(codigo);
 		return concurso;
 	}
+
+	
 
 	
 

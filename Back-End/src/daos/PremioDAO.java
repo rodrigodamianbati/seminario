@@ -17,6 +17,8 @@ public class PremioDAO implements IPremio {
 	private String listar = "SELECT * FROM premio";
 	private String modificar = "UPDATE premio SET nombre = ? WHERE id = ?";
 	private String eliminar = "DELETE FROM premio WHERE id = ?";
+	private String premio = "SELECT * FROM premio WHERE id = ?";
+	private String premioDadoNombre = "Select * FROM premio WHERE nombre = ?";
 
 	/**
 	 * Metodo que inserta un nuevo premio la base de datos.
@@ -125,6 +127,44 @@ public class PremioDAO implements IPremio {
 			statement.executeUpdate();
 		} catch (SQLException ex) {
 			throw new RuntimeException("No se puede eliminar el premio ya que esta asignado a un concurso.");
+		}
+	}
+
+	@Override
+	public Premio premio(int id) {
+		ConexionDB conexion_db = new ConexionDB();
+		Premio premio = new Premio();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.premio)) {
+			statement.setInt(1, id);
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					premio = new Premio(rs.getInt("id"), rs.getString("nombre"));
+				}
+				return premio;
+			} catch (SQLException e) {
+				throw new RuntimeException("El premio dado no existe");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error al cargar la lista de premios");
+		}
+	}
+
+	@Override
+	public Premio premio(String nombre) {
+		ConexionDB conexion_db = new ConexionDB();
+		Premio premio = new Premio();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.premioDadoNombre)) {
+			statement.setString(1, nombre);
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					premio = new Premio(rs.getInt("id"), rs.getString("nombre"));
+				}
+				return premio;
+			} catch (SQLException e) {
+				throw new RuntimeException("El premio dado no existe");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error al cargar la lista de premios");
 		}
 	}
 

@@ -448,14 +448,6 @@ public class Puesto_Administrar extends JFrame {
 						// Se crea el Puesto
 						Puesto puesto = api.crearPuesto(posicion.getText(), concurso, (Premio) premio.getSelectedItem());
 						
-						// Si el puesto ya existe no se permite la creacion de este y se muestra mensaje
-						if (api.existePuesto(puesto)) {
-							return bundle.getString("puesto.repetida");
-						}
-						
-						// Se guarda el concurso en la base de datos
-						api.guardarPuesto(puesto);
-						
 						// Se vacian los inputs y se recargan el comboBox
 						vaciarInputs();
 						

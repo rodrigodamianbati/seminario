@@ -152,7 +152,7 @@ public class ConcursoDAO implements IConcurso {
 		ConexionDB conexion_db = new ConexionDB();
 		List<Categoria> lista = new ArrayList<Categoria>();
 		try (Connection connect = conexion_db.obtenerConexionBD();
-				PreparedStatement statement = connect.prepareStatement(this.verificar)) {
+			PreparedStatement statement = connect.prepareStatement(this.verificar)) {
 			statement.setString(1, codigo);
 			try (ResultSet rs = statement.executeQuery();) {
 				while (rs.next()) {

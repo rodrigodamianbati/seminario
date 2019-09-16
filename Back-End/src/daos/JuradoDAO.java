@@ -17,6 +17,7 @@ public class JuradoDAO implements IJurado {
 	private String listar = "SELECT * FROM jurado";
 	private String modificar = "UPDATE jurado SET nombre = ?, apellido = ? WHERE id = ?";
 	private String eliminar = "DELETE FROM jurado WHERE id = ?";
+	private String jurado = "SELECT j.id FROM jurado j WHERE j.id = ?";
 
 	/**
 	 * Metodo que inserta un nuevo jurado en la base de datos.
@@ -123,6 +124,25 @@ public class JuradoDAO implements IJurado {
 			statement.executeUpdate();
 		} catch (SQLException ex) {
 			throw new RuntimeException("No se puede eliminar el jurado ya que esta asignado a un concurso.");
+		}
+	}
+
+	@Override
+	public Jurado jurado(int id_jurado) {
+		ConexionDB conexion_db = new ConexionDB();
+		Jurado jurado = new Jurado();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.jurado )) {
+			statement.setInt(1, id_jurado);
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					jurado = new Jurado(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellido"));
+				}
+				return jurado;
+			} catch (SQLException e) {
+				throw new RuntimeException("El jurado dado no existe");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error en la conexion");
 		}
 	}
 

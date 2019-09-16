@@ -61,7 +61,7 @@ public class Participante_Administrar extends JFrame {
 	private JTable table_1 = new JTable();
 	private JLabel lblInscriptos = new JLabel("Inscriptos");
 	private JScrollPane scrollPane_1 = new JScrollPane();
-	private JComboBox comboBox;
+	private JComboBox<Concurso> comboBoxConcursos;
 
 	public Participante_Administrar(Api ap, String idioma) {
 		// Creo la api
@@ -180,12 +180,12 @@ public class Participante_Administrar extends JFrame {
 			i++;
 		}
 
-		comboBox = new JComboBox(elementos);
-		comboBox.setBounds(662, 164, 134, 24);
+		comboBoxConcursos = new JComboBox(elementos);
+		comboBoxConcursos.setBounds(662, 164, 134, 24);
 //		String[] elementos = {"todos", "con publicaciones", "con inscripciones"};
 //		comboBox = new JComboBox(elementos);
-		contentPane.add(comboBox);
-		comboBox.addActionListener(e -> listarParticipantesSeleccion((String) comboBox.getSelectedItem()));
+		contentPane.add(comboBoxConcursos);
+		comboBoxConcursos.addActionListener(e -> listarParticipantesSeleccion((String) comboBoxConcursos.getSelectedItem()));
 
 		JLabel lblParticipantes = new JLabel("Participantes");
 		lblParticipantes.setBounds(664, 144, 112, 15);
@@ -264,7 +264,7 @@ public class Participante_Administrar extends JFrame {
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
 				}finally {
-					listarParticipantesSeleccion((String) comboBox.getSelectedItem());
+					listarParticipantesSeleccion((String) comboBoxConcursos.getSelectedItem());
 				}
 			}
 		};
@@ -305,7 +305,7 @@ public class Participante_Administrar extends JFrame {
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
 				} finally {
-					listarParticipantesSeleccion((String) comboBox.getSelectedItem());
+					listarParticipantesSeleccion((String) comboBoxConcursos.getSelectedItem());
 				}
 			}
 		};
@@ -332,7 +332,7 @@ public class Participante_Administrar extends JFrame {
 //
 //						System.out.println(participante);
 						
-						api.eliminarInscripcion((int) table.getValueAt(modelRow, 0), (String)comboBox.getSelectedItem());
+						api.eliminarInscripcion((int) table.getValueAt(modelRow, 0), (String)comboBoxConcursos.getSelectedItem());
 						// Modifico el participante
 //						api.modificarParticipante(participante);
 						JOptionPane.showMessageDialog(null, bundle.getString("inscripcion.exito.eliminar"));
@@ -341,7 +341,7 @@ public class Participante_Administrar extends JFrame {
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
 				} finally {
-					listarParticipantesSeleccion((String) comboBox.getSelectedItem());
+					listarParticipantesSeleccion((String) comboBoxConcursos.getSelectedItem());
 				}
 			}
 		};
@@ -365,7 +365,7 @@ public class Participante_Administrar extends JFrame {
 //								table.getValueAt(modelRow, 3).toString(), table.getValueAt(modelRow, 4).toString());
 //						api.inscribirParticipante((String)comboBox.getSelectedItem(), participante);
 //
-						api.inscribirParticipante((String)comboBox.getSelectedItem(), (int) table.getValueAt(modelRow, 0));
+						api.inscribirParticipante((String)comboBoxConcursos.getSelectedItem(), (int) table.getValueAt(modelRow, 0));
 						//api.eliminarInscripcion((int) table.getValueAt(modelRow, 0), (String)comboBox.getSelectedItem());
 						// Modifico el participante
 //						api.modificarParticipante(participante);
@@ -375,7 +375,7 @@ public class Participante_Administrar extends JFrame {
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
 				} finally {
-					listarParticipantesSeleccion((String) comboBox.getSelectedItem());
+					listarParticipantesSeleccion((String) comboBoxConcursos.getSelectedItem());
 				}
 			}
 		};

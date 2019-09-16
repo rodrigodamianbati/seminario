@@ -545,6 +545,6 @@ public class Concurso {
 	}
 	
 	public String toString() {
-		return this.nombre;
+		return this.codigo;
 	}
 }

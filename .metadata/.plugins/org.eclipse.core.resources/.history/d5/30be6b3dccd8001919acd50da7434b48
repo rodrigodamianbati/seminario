@@ -1,0 +1,151 @@
+package daos;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import interfaces.IPremio;
+import modelos.Premio;
+
+public class PremioDAO implements IPremio {
+	
+	private String insertar = "INSERT INTO premio(nombre) VALUES(?)";
+	private String verificar = "SELECT * FROM premio WHERE nombre = ?";
+	private String listar = "SELECT * FROM premio";
+	private String modificar = "UPDATE premio SET nombre = ? WHERE id = ?";
+	private String eliminar = "DELETE FROM premio WHERE id = ?";
+	private String premio = "SELECT * FROM premio WHERE id = ?";
+
+	/**
+	 * Metodo que inserta un nuevo premio la base de datos.
+	 * 
+	 * @param premio
+	 *            parametro del tipo Premio
+	 */
+	@Override
+	public void insertar(Premio premio) {
+		ConexionDB conexion_db = new ConexionDB();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.insertar)) {
+			try {
+				statement.setString(1, premio.getNombre());
+			} catch (SQLException ex) {
+				throw new RuntimeException("Ya existe este premio");
+			}
+			statement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RuntimeException("Error al guardar premio");
+		}
+	}
+
+	/**
+	 * Metodo que devuelve todos los premios.
+	 * 
+	 * @return lista de objetos Premio
+	 */
+	public List<Premio> devolverPremios() {
+		ConexionDB conexion_db = new ConexionDB();
+		List<Premio> lista = new ArrayList<Premio>();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.listar)) {
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					lista.add(new Premio(rs.getInt("id"), rs.getString("nombre")));
+				}
+				return lista;
+			} catch (SQLException e) {
+				throw new RuntimeException("Error al cargar la lista de premios");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error al cargar la lista de premios");
+		}
+	}
+
+	/**
+	 * Metodo que verifica si existe un premio en la base de datos por su nombre.
+	 * 
+	 * @param nombre
+	 *            email del premio a verificar
+	 *            
+	 * @return boolean 
+	 */
+	@Override
+	public boolean verificarExistente(String nombre) {
+		ConexionDB conexion_db = new ConexionDB();
+		List<Premio> lista = new ArrayList<Premio>();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.verificar)) {
+			statement.setString(1, nombre);
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					lista.add(new Premio(rs.getString("nombre")));
+				}
+				if (lista.size() == 0) {
+					return false;
+				}
+				return true;
+			} catch (SQLException e) {
+				throw new RuntimeException("Error en buscar premio existente");
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException("Error en buscar premio existente");
+		}
+	}
+
+	/**
+	 * Metodo que modifica un premio en la base de datos.
+	 * 
+	 * @param premio
+	 *           Variable de tipo premio
+	 */
+	public void modificar(Premio premio) {
+		ConexionDB conexion_db = new ConexionDB();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.modificar)) {
+			try {
+				statement.setString(1, premio.getNombre());
+			} catch (SQLException ex) {
+				throw new RuntimeException("Ya existe un premio con este nombre");
+			}
+			statement.setInt(2, premio.getId());
+			statement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RuntimeException("Error al modificar premio.");
+		}
+	}
+
+	/**
+	 * Metodo que elimina un premio en la base de datos.
+	 * 
+	 * @param id
+	 *            variable de tipo int
+	 */
+	public void eliminar(int id) {
+		ConexionDB conexion_db = new ConexionDB();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.eliminar)) {
+			statement.setInt(1, id);
+			statement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RuntimeException("No se puede eliminar el premio ya que esta asignado a un concurso.");
+		}
+	}
+
+	@Override
+	public Premio premio(int id) {
+		ConexionDB conexion_db = new ConexionDB();
+		Premio premio = new Premio();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.premio)) {
+			statement.setInt(1, id);
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					premio = new Premio(rs.getInt("id"), rs.getString("nombre"));
+				}
+				return premio;
+			} catch (SQLException e) {
+				throw new RuntimeException("El premio dado no existe");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error al cargar la lista de premios");
+		}
+	}
+
+}
