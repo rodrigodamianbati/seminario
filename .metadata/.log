@@ -6728,3 +6728,13 @@ Command-line arguments:  -data /home/bati/eclipse-workspace -os linux -ws gtk -a
 
 !ENTRY org.eclipse.egit.core 1 0 2019-09-15 20:44:59.851
 !MESSAGE Using Apache MINA sshd as ssh client.
+!SESSION 2019-09-15 21:15:53.206 -----------------------------------------------
+eclipse.buildId=4.11.0.I20190307-0500
+java.version=1.8.0_222
+java.vendor=Private Build
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=es_AR
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -data /home/bati/seminario -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.core 1 0 2019-09-15 21:15:58.863
+!MESSAGE Using Apache MINA sshd as ssh client.

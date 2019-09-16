@@ -41,10 +41,10 @@ public class Categoria_Administrar extends JFrame {
 	private Api api;
 	private ResourceBundle bundle;
 
-	public Categoria_Administrar(String idioma) {	
-		
+	public Categoria_Administrar(Api ap, String idioma) {	
+		this.api = ap;
 		// Se crea la api
-		api = new Api();
+//		api = new Api();
 			
 		// Se crea el bundle
 		bundle = ResourceBundle.getBundle(idioma);
@@ -134,8 +134,8 @@ public class Categoria_Administrar extends JFrame {
 		
 		AbstractAction eliminar = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar esta categoria?",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("categoria.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 //				System.out.println(input);
@@ -162,8 +162,8 @@ public class Categoria_Administrar extends JFrame {
 		
 		AbstractAction modificar = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				int input = JOptionPane.showConfirmDialog(null, "¿Desea modificar esta categoria?",
-						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("categoria.desea_modificar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 
 				// 0=yes, 1=no, 2=cancel
 			
@@ -176,7 +176,7 @@ public class Categoria_Administrar extends JFrame {
 							
 							// Se agrega la categoria a la tabla
 
-							JOptionPane.showMessageDialog(null, "La categoria se ha modificado con exito");
+							JOptionPane.showMessageDialog(null, bundle.getString("categoria.exito.modificar"));
 						
 					}
 				} catch (Exception a) {
@@ -189,34 +189,34 @@ public class Categoria_Administrar extends JFrame {
 		
 		ButtonColumn buttonColumn1 = new ButtonColumn(table, modificar, 2);
 //		buttonColumn1.actionPerformed(e -> eliminarPrueba());
-//		buttonColumn1.setMnemonic(KeyEvent.VK_D);
+		buttonColumn1.setMnemonic(KeyEvent.VK_D);
 		
 //		btnEliminarSeleccionados.addActionListener(e -> eliminarCategoria());
 	}
 	
-	public void  eliminarPrueba () {
-		
-			int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar esta categoria?",
-					"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-
-			// 0=yes, 1=no, 2=cancel
+//	public void  eliminarPrueba () {
+//		
+//			int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar esta categoria?",
+//					"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+//
+//			// 0=yes, 1=no, 2=cancel
 //			System.out.println(input);
-			try {
-				if (input == 0) {
+//			try {
+//				if (input == 0) {
 //					JTable table = (JTable) e.getSource();
 //					int modelRow = Integer.valueOf(e.getActionCommand());
-					int modelRow = Integer.valueOf(1);
-					api.eliminarCategoria((int) table.getValueAt(modelRow, 0));
-					
-					// Se elimina la categoria de la tabla
-					model.removeRow(modelRow);
-				}
-			} catch (Exception a) {
-				JOptionPane.showMessageDialog(null, a.getMessage());
-			}finally {
-				categorias();
-			}
-		}
+//					int modelRow = Integer.valueOf(1);
+//					api.eliminarCategoria((int) table.getValueAt(modelRow, 0));
+//					
+//					// Se elimina la categoria de la tabla
+//					model.removeRow(modelRow);
+//				}
+//			} catch (Exception a) {
+//				JOptionPane.showMessageDialog(null, a.getMessage());
+//			}finally {
+//				categorias();
+//			}
+//		}
 	
 	
 	/**
@@ -232,8 +232,8 @@ public class Categoria_Administrar extends JFrame {
 				model.addRow(new Object[]{
 					categoria.getId(),
 					categoria.getNombre(),
-					"modificar",
-					"eliminar"
+					bundle.getString("modificar"),
+					bundle.getString("eliminar")
 				});
 			}
 		} catch(Exception e) {
@@ -258,9 +258,9 @@ public class Categoria_Administrar extends JFrame {
 			protected String doInBackground() {
 				try {
 					// Si la categoria ya existe no se permite crearla y envia un mensaje al usuario
-					if (api.existeCategoria(nombreCategoria.getText())){
-						return bundle.getString("categoria.repetida");
-					}
+//					if (api.existeCategoria(nombreCategoria.getText())){
+//						return bundle.getString("categoria.repetida");
+//					}
 					
 					// Se crea la categoria
 					Categoria categoria = api.crearCategoria(nombreCategoria.getText());

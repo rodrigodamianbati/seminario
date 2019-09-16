@@ -1,0 +1,286 @@
+package ventanas;
+
+import modelos.Categoria;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import java.awt.Button;
+import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
+
+import api.Api;
+
+/**
+ * JFrame Pantalla para administrar las categorias.
+ * 
+ * @author Rodrigo Batillier
+ *
+*/
+
+@SuppressWarnings("serial")
+public class Categoria_Administrar extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField nombreCategoria;
+	private JTable table;
+	private DefaultTableModel model;
+	private Api api;
+	private ResourceBundle bundle;
+
+	public Categoria_Administrar(String idioma) {	
+		
+		// Se crea la api
+		api = new Api();
+			
+		// Se crea el bundle
+		bundle = ResourceBundle.getBundle(idioma);
+		
+		setTitle(bundle.getString("categoria.titulo"));
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 656, 513);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNombre = new JLabel(bundle.getString("nombre"));
+		lblNombre.setBounds(74, 11, 46, 22);
+		contentPane.add(lblNombre);
+		
+		this.nombreCategoria = new JTextField();
+		this.nombreCategoria.setBounds(130, 11, 212, 22);
+		contentPane.add(this.nombreCategoria);
+		
+		Label label = new Label(bundle.getString("listadocategoria.titulo"));
+		label.setBounds(259, 101, 244, 22);
+		contentPane.add(label);
+		
+		JButton btnAtras = new JButton(bundle.getString("volver.principal"));
+		btnAtras.setBounds(10, 441, 620, 23);
+		contentPane.add(btnAtras);
+		btnAtras.addActionListener(e -> dispose() );
+		
+		Button button = new Button(bundle.getString("categoria.agregar"));
+		button.setBounds(351, 11, 251, 22);
+		contentPane.add(button);
+		button.addActionListener(e -> nuevaCategoria());
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 129, 620, 185);
+		contentPane.add(scrollPane);
+		
+		//table = new JTable(new JTableModel());
+		
+		
+		table = new JTable();
+		
+		
+		scrollPane.setViewportView(table);
+		table.setCellSelectionEnabled(true);
+		
+		table.setModel(new DefaultTableModel(
+			new Object[][] {},
+			new String[] {
+					bundle.getString("id"), bundle.getString("nombre"), 
+					bundle.getString("modificar"), bundle.getString("eliminar")
+			}
+		) {
+			@SuppressWarnings("rawtypes")
+			Class[] columnTypes = new Class[] {
+					Object.class, Object.class, Boolean.class, Boolean.class
+				};
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+				
+				public boolean isCellEditable(int row, int column) {
+					return column == 0 ? false : true;
+			    }
+			}
+		);
+		model = (DefaultTableModel) table.getModel();
+		table.getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getColumnModel().getColumn(0).setMinWidth(0);
+		table.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+		table.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+		
+		
+//		JButton btnEliminarSeleccionados = new JButton(bundle.getString("eliminar"));
+//		btnEliminarSeleccionados.setBounds(10, 324, 300, 23);
+//		contentPane.add(btnEliminarSeleccionados);
+//		btnEliminarSeleccionados.addActionListener(e -> eliminarCategoria());
+//		
+//		JButton btnModificarSeleccionados = new JButton(bundle.getString("modificar"));
+//		btnModificarSeleccionados.setBounds(330, 324, 300, 23);
+//		contentPane.add(btnModificarSeleccionados);
+//		btnModificarSeleccionados.addActionListener(e -> modificarCategoria());
+		
+		this.categorias();
+		
+		AbstractAction eliminar = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar esta categoria?",
+						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+				// 0=yes, 1=no, 2=cancel
+//				System.out.println(input);
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+						
+						api.eliminarCategoria((int) table.getValueAt(modelRow, 0));
+						
+						// Se elimina la categoria de la tabla
+						model.removeRow(modelRow);
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					categorias();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn = new ButtonColumn(table, eliminar, 3);
+		buttonColumn.setMnemonic(KeyEvent.VK_D);
+		
+		AbstractAction modificar = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, "¿Desea modificar esta categoria?",
+						"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+				// 0=yes, 1=no, 2=cancel
+			
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+							//Se modifica la categoria
+							api.modificarCategoria((int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString());
+							
+							// Se agrega la categoria a la tabla
+
+							JOptionPane.showMessageDialog(null, "La categoria se ha modificado con exito");
+						
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					categorias();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn1 = new ButtonColumn(table, modificar, 2);
+//		buttonColumn1.actionPerformed(e -> eliminarPrueba());
+		buttonColumn1.setMnemonic(KeyEvent.VK_D);
+		
+//		btnEliminarSeleccionados.addActionListener(e -> eliminarCategoria());
+	}
+	
+//	public void  eliminarPrueba () {
+//		
+//			int input = JOptionPane.showConfirmDialog(null, "¿Desea eliminar esta categoria?",
+//					"Seleccione una opcion...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+//
+//			// 0=yes, 1=no, 2=cancel
+//			System.out.println(input);
+//			try {
+//				if (input == 0) {
+//					JTable table = (JTable) e.getSource();
+//					int modelRow = Integer.valueOf(e.getActionCommand());
+//					int modelRow = Integer.valueOf(1);
+//					api.eliminarCategoria((int) table.getValueAt(modelRow, 0));
+//					
+//					// Se elimina la categoria de la tabla
+//					model.removeRow(modelRow);
+//				}
+//			} catch (Exception a) {
+//				JOptionPane.showMessageDialog(null, a.getMessage());
+//			}finally {
+//				categorias();
+//			}
+//		}
+	
+	
+	/**
+	 * Metodo que muestra todas las categorias en la tabla
+	 */
+	public void categorias() {
+		try {
+			// Se vacia la tabla
+			model.setRowCount(0);
+			
+			// Se agregan todas las categorias a la tabla
+			for (Categoria categoria: api.listarCategorias()) {
+				model.addRow(new Object[]{
+					categoria.getId(),
+					categoria.getNombre(),
+					"modificar",
+					"eliminar"
+				});
+			}
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+	}
+	
+	/**
+	 * Metodo que crea una nueva categoria
+	 */
+	private void nuevaCategoria() {
+		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+			protected void done() {
+				try {
+					String mensajeError = get();
+					JOptionPane.showMessageDialog(null, mensajeError);
+				} catch (InterruptedException | ExecutionException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			protected String doInBackground() {
+				try {
+					// Si la categoria ya existe no se permite crearla y envia un mensaje al usuario
+//					if (api.existeCategoria(nombreCategoria.getText())){
+//						return bundle.getString("categoria.repetida");
+//					}
+					
+					// Se crea la categoria
+					Categoria categoria = api.crearCategoria(nombreCategoria.getText());
+				
+//					// Se guarda la categoria
+//					api.nuevaCategoria(categoria);
+					
+					// Se vacian los inputs
+					nombreCategoria.setText("");
+					
+					// Se adhiere la nueva categoria a la tabla
+					categorias();
+				
+					// Se muestra el mensaje correspondiente
+					return bundle.getString("categoria.exito.agregar");
+				} catch (RuntimeException e) {
+					return e.getMessage();
+				}
+			}
+		};
+		worker.execute();
+	}
+}

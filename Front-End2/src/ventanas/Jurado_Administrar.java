@@ -42,13 +42,13 @@ public class Jurado_Administrar extends JFrame {
 	private JLabel lblListaJurados;
 	private Api api;
 
-	public Jurado_Administrar(String idioma) {
+	public Jurado_Administrar(Api ap, String idioma) {
 		
 		// Creo el bundle
 		bundle = ResourceBundle.getBundle(idioma);
 		
 		// Creo la api
-		api = new Api();
+		api = ap;
 		
 		setTitle(bundle.getString("jurado.titulo"));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

@@ -63,9 +63,9 @@ public class Participante_Administrar extends JFrame {
 	private JScrollPane scrollPane_1 = new JScrollPane();
 	private JComboBox comboBox;
 
-	public Participante_Administrar(String idioma) {
+	public Participante_Administrar(Api ap, String idioma) {
 		// Creo la api
-		api = new Api();
+		api = ap;
 
 		// Creo el bundle
 		bundle = ResourceBundle.getBundle(idioma);

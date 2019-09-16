@@ -1,0 +1,166 @@
+-- Menu principal --
+principal.titulo = Menu Principal
+principal.menu_categoria = Categoria
+principal.menu_participante = Participante
+principal.menu_jurado = Jurado
+principal.menu_premio = Premio
+principal.menu_concurso = Concurso
+
+-- Menu principal: Idioma --
+principal.cambiar_idioma = Cambiar idioma
+lenguaje.español = Español
+lenguaje.ingles = Ingles
+
+-- Publicacion --
+publicacion.agregar = Agregar publicacion
+publicacion = Publicacion
+publicaciones = Publicaciones
+publicacion.exito.agregar = Publicacion agregada con exito
+publicaciones.mostrar = Mostrar publicaciones
+publicacion.exito.buscar = Publicaciones del concurso 
+publicacion.exito.eliminar = Publicacion eliminada con exito
+publicacion.evaluar = Asignar jurado
+
+-- Inscripcion --
+inscripcion.titulo = Administrar inscripciones y publicaciones de 
+inscripcion.seleccionar = Agregar
+inscripcion.inscripto = Concursos actuales inscripto
+inscripcion.agregar = Agregar inscripciones
+inscripcion.exito.agregar = Inscripcion agregada con exito
+eliminar.inscripcion = Eliminar inscripcion
+inscripcion.exito.eliminar = Inscripcion eliminada con exito
+inscripcion.repetida = El participante ya se encuentra inscripto a este concurso
+inscripcion.concursos_mostrar = Seleccione los concursos que desea inscribirse
+concurso.inscripcion_finalizado = Concursos con inscripcion finalizada
+concurso.subir_publicacion = Concurso con publicacion abierta
+
+-- Puesto --
+puesto.titulo = Administrar puestos del concurso 
+puesto.excepcion = No se olvide que puede publicar los resultados en twitter!
+puesto.posicion = Posicion
+puesto.premio = Premio
+puesto.agregar = Agregar posicion
+puesto.repetida = El puesto ya existe
+puesto.exito.agregar = Puesto agregado con exito
+puesto.exito.eliminar = Puesto eliminado con exito
+puesto.asignar = Realizar concurso
+puesto.posiciones = Aqui puede agregar nuevos puestos
+
+-- Concurso --
+concurso.titulo = Administrar concursos
+concurso.fecha_apertura_inscripcion = Fecha apertura inscripcion
+concurso.fecha_cierre_inscripcion = Fecha cierre inscripcion
+concurso.fecha_inicio_publicacion = Fecha apertura publicacion
+concurso.fecha_cierre_publicacion = Fecha cierre publicacion
+concurso.agregar = Agregar concurso
+concurso.excepcion= Antes de crear un concurso debe crear una categoria
+concurso.exito.agregar = Concurso agregado con exito
+concurso.repetida = El concurso ya existe
+concurso.horaInicioInscripcion = Hora inicio inscripcion
+concurso.horaFinInscripcion = Hora cierre inscripcion
+concurso.horaInicioPublicacion = Hora inicio publicacion
+concurso.horaFinPublicacion = Hora cierre publicacion
+concurso.exito.eliminar = Concurso eliminado con exito
+concurso.exito.modificar = Concurso modificado con exito
+concurso.repetida = Ya existe un concurso con ese codigo
+concurso.corregido = Corregido
+concurso.lista = Listado de concursos
+concurso.para_inscribirse = Concursos con inscripcion abierta
+concurso_no_participante = No se publicara en twitter ya que ninguna persona se inscribio o subio publicacion al concurso
+concurso.inscribir = Inscribir
+concurso.eliminar.inscripcion = Eliminar inscripcion
+concurso.publicaciones = Publicaciones
+concurso.desea_eliminar = "¿Desea eliminar este concurso?"
+
+-- Categoria --
+categoria.titulo = Administrar categorias
+categoria.agregar = Agregar categoria
+listadocategoria.titulo = Listado de categorias
+categoria.exito.agregar = La categoria se agrego con exito
+categoria.exito.eliminar = La categoria se elimino con exito
+categoria.exito.modificar = La categoria se modifico con exito
+categoria.repetida = Ya existe una categoria con ese nombre
+categoria.no_existe = La categoria no existe
+categoria.desea_eliminar = ¿Desea eliminar esta categoria?
+categoria.desea_modificar = ¿Desea modificar esta categoria?
+
+
+-- Participante --
+participante.titulo = Administrar participantes
+participante.agregar = Agregar participante
+participante.repetida = Ya existe un participante con ese DNI
+participante.exito.agregar = El participante se agrego con exito
+listadoparticipante.titulo = Listado de participantes
+participante.exito.eliminar = Participante eliminado con exito
+participante.exito.modificar = Participante modificado con exito
+participante.lista_inscripcion_publicacion = Inscripciones y publicaciones
+volver.participante = Volver a la pantalla de participantes
+participante_publicacion.lista = Publicaciones
+participantes = Participantes
+
+-- Jurado --
+jurado.titulo = Administrar jurado
+jurado.agregar = Agregar jurado
+jurado.repetida = Ya existe un jurado con ese nombre y apellido
+jurado.exito.agregar = Jurado agregado con exito
+jurado.lista = Listado de jurados
+jurado.exito.eliminar = Jurado eliminado con exito
+jurado.exito.modificar = Jurado modificado con exito
+jurado.seleccionar = Seleccione los jurados evaluadores
+
+-- Premio --
+premio.titulo = Administrar premio
+premio.agregar = Agregar premio
+premio.repetida = Ya existe un premio con ese nombre
+premio.exito.agregar = Premio agregado con exito
+premio.exito.eliminar = Premio eliminado con exito
+premio.exito.modificar = Premio modificado con exito
+premio.lista = Listado de premios
+premio.nombre = Nombre premio
+id.premio = ID premio
+premio.lista = Lista premios
+
+-- Twitter --
+twittear = Twittear
+
+-- Componentes en comun --
+seleccionar = Seleccione una opcion...
+nombre = Nombre
+error_nombre = Ingrese un nombre
+apellido = Apellido
+error_apellido = Ingrese un apellido
+email = Correo
+error_email = Ingrese un correo
+dni = Dni
+erro_dni = Ingrese un dni
+principal.administrar = Administrar
+volver.principal = Volver a la pantalla principal
+volver.concurso = Volver a la pantalla de concurso
+id = ID
+modificar = Modificar
+eliminar = Eliminar
+seleccionar.uno = Seleccione un elemento
+seleccionar.mucho = Seleccione un solo elemento
+codigo = Codigo
+hashtag = Hashtag
+categoria = Categoria
+ver_publicaciones = Publicaciones
+vacio.fechaAperturaInscripcion = Ingrese una fecha de apertura de incripcion
+vacio.fechaCierreInscripcion = Ingrese una fecha de cierre de inscripcion
+vacio.fechaAperturaPublicacion = Ingrese una fecha de apertura de publicacion
+vacio.fechaCierrePublicacion = Ingrese una fecha de cierre de publication
+inscripcion.fecha_inicio = Fecha inicio inscripcion
+inscripcion.hora_inicio = Hora inicio inscripcion
+inscripcion.fecha_fin = Fecha fin inscripcion
+inscripcion.hora_fin = Hora fin inscripcion
+publicacion.fecha_inicio = Fecha inicio publicacion
+publicacion.hora_inicio = Hora inicio publicacion
+publicacion.fecha_fin = Fecha fin publicacion
+publicacion.hora_fin = Hora fin publicacion
+listar.puestos_participantes = Puestos y participantes
+id.categoria = ID categoria
+categoria.nombre = Categoria
+seleccionar = Seleccionar
+texto = Texto
+puntaje = Puntaje
+ver = Ver

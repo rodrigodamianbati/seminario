@@ -60,10 +60,10 @@ public class Puesto_Administrar extends JFrame {
 	
 	private TableColumn tc = new TableColumn();
 	
-	public Puesto_Administrar(String idioma, Concurso concurso) {
+	public Puesto_Administrar(Api ap, String idioma, Concurso concurso) {
 		
 		// Creo la api
-		api = new Api();
+		api = ap;
 		
 		// Creo el bundle
 		bundle = ResourceBundle.getBundle(idioma);

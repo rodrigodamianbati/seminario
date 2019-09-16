@@ -635,6 +635,8 @@ public class Api {
 		Concurso concurso = new Concurso(id, codigo, nombre, hashtag, categoria, fechaInicioInscripcion, fechaCierreInscripcion,
 				fechaInicioPublicacion, fechaCierrePublicacion, horaInicioInscripcion, horaFinInscripcion, horaInicioPublicacion,
 				horaFinPublicacion, corregido);
+			IConcurso concurso_dao = new ConcursoDAO();
+			concurso_dao.insertar(concurso);
 		return concurso;
 	}
 	
@@ -650,22 +652,22 @@ public class Api {
 		concurso_dao.insertar(concurso);
 	}
 	
-	/**
-	 * Metodo que devuelve verdadero si existe un concurso con ese codigo en la base de datos
-	 * 
-	 * @param codigo
-	 * 			variable de tipo String
-	 * 
-	 * @return booleano
-	 * 			Devuelve verdadero si ya existe, devuelve falso sino
-	 */
-	public boolean existeConcurso(String codigo) {
-		IConcurso concurso_dao = new ConcursoDAO();
-		if (concurso_dao.verificarExistente(codigo)) {
-			return true;
-		}
-		return false;
-	}
+//	/**
+//	 * Metodo que devuelve verdadero si existe un concurso con ese codigo en la base de datos
+//	 * 
+//	 * @param codigo
+//	 * 			variable de tipo String
+//	 * 
+//	 * @return booleano
+//	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+//	 */
+//	public boolean existeConcurso(String codigo) {
+//		IConcurso concurso_dao = new ConcursoDAO();
+//		if (concurso_dao.verificarExistente(codigo)) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	/**
 	 * Metodo que devuelve un listado de todos los concursos
@@ -898,22 +900,22 @@ public class Api {
 		inscripcion_dao.eliminar(id_participante, id_concurso);
 	}
 	
-	/**
-	 * Metodo que devuelve verdadero si existe una inscripcion en la base de datos
-	 * 
-	 * @param inscripcion
-	 * 			inscripcion a evaluar si ya existe en la base de datos
-	 * 
-	 * @return booleano
-	 * 			Devuelve verdadero si ya existe, devuelve falso sino
-	 */
-	public boolean existeInscripcion(Inscripcion inscripcion) {
-		IInscripcion inscripcion_dao = new InscripcionDAO();
-		if (inscripcion_dao.verificarExistente(inscripcion.getParticipante().getId(), inscripcion.getConcurso().getId())) {
-			return true;
-		}
-		return false;
-	}
+//	/**
+//	 * Metodo que devuelve verdadero si existe una inscripcion en la base de datos
+//	 * 
+//	 * @param inscripcion
+//	 * 			inscripcion a evaluar si ya existe en la base de datos
+//	 * 
+//	 * @return booleano
+//	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+//	 */
+//	public boolean existeInscripcion(Inscripcion inscripcion) {
+//		IInscripcion inscripcion_dao = new InscripcionDAO();
+//		if (inscripcion_dao.verificarExistente(inscripcion.getParticipante().getId(), inscripcion.getConcurso().getId())) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	/**
 	 * Metodo que devuelve un listado de todos los concursos con inscripcion cerrada que se inscribio el participante
@@ -1091,5 +1093,20 @@ public class Api {
 		
 	}
 
-	
+	public Concurso crearConcurso(int id, String codigo, String nombre, String hashtag, String nombreCategoria,
+			LocalDate fechaInicioInscripcion, LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion, int horaFinInscripcion,
+			int horaInicioPublicacion, int horaFinPublicacion, Boolean estado) {
+			ICategoria categoriaDAO = new CategoriaDAO();
+			Categoria categoria = categoriaDAO.categoria(nombreCategoria);
+			Concurso concurso = new Concurso(id, codigo, nombre, hashtag, categoria, fechaInicioInscripcion, fechaCierreInscripcion,
+				fechaInicioPublicacion, fechaCierrePublicacion, horaInicioInscripcion, horaFinInscripcion, horaInicioPublicacion,
+				horaFinPublicacion, estado);
+			IConcurso concurso_dao = new ConcursoDAO();
+			concurso_dao.insertar(concurso);
+		return concurso;
+	}
+
+//	int id, String codigo, String nombre, String hashtag, Categoria categoria, LocalDate fechaInicioInscripcion,
+//	LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion,
+//	int horaFinInscripcion, int horaInicioPublicacion, int horaFinPublicacion, boolean corregido
 }

@@ -40,10 +40,10 @@ public class Premio_Administrar extends JFrame {
 	private JTextField nombre;
 	private Api api;
 
-	public Premio_Administrar(String idioma) {
+	public Premio_Administrar(Api ap, String idioma) {
 		
 		// Creo la api
-		api = new Api();
+		api = ap;
 		
 		// Creo el bundle
 		bundle = ResourceBundle.getBundle(idioma);
