@@ -13,6 +13,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import api.Api;
+
 /**
  * JFrame Principal.
  * @author Rodrigo Batillier
@@ -28,6 +30,7 @@ public class Principal extends JFrame {
 	private JLabel lblCambiarIdioma;
 	private String idioma;
 	private ResourceBundle bundle;
+	private Api api = new Api();
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -95,31 +98,31 @@ public class Principal extends JFrame {
 		
 		// Se crea ventana "Categoria"
 				mntmAlta.addActionListener(e -> {
-					Categoria_Administrar categoria = new Categoria_Administrar(idioma);
+					Categoria_Administrar categoria = new Categoria_Administrar(this.api, idioma);
 					categoria.setVisible(true);
 				});
 		
 		// Se crea ventana "Concurso"
 		mntmAdministrar_3.addActionListener( e -> {
-			Concurso_Administrar concurso = new Concurso_Administrar(idioma);
+			Concurso_Administrar concurso = new Concurso_Administrar(this.api,idioma);
 			concurso.setVisible(true);
 		});
 		
 		// Se crea ventana "Premio"
 		mntmAdministrar_2.addActionListener( e -> {
-			Premio_Administrar premio = new Premio_Administrar(idioma);
+			Premio_Administrar premio = new Premio_Administrar(this.api, idioma);
 			premio.setVisible(true);
 		});
 		
 		// Se crea ventana "Participante"
 		mntmAdministrar.addActionListener(e -> {
-			Participante_Administrar participante = new Participante_Administrar(idioma);
+			Participante_Administrar participante = new Participante_Administrar(this.api, idioma);
 			participante.setVisible(true);
 		});
 		
 		// Se crea ventana "Jurado"
 		mntmAdministrar_1.addActionListener(e -> {
-			Jurado_Administrar jurado = new Jurado_Administrar(idioma);
+			Jurado_Administrar jurado = new Jurado_Administrar(this.api, idioma);
 			jurado.setVisible(true);
 		});
 		

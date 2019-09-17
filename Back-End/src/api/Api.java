@@ -73,19 +73,7 @@ public class Api {
 		categoria_dao.insertar(categoria);
 		return categoria;
 	}
-	
-//	/**
-//	 * Metodo para la persistencia de una categoria en la base de datos.
-//	 * 
-//	 * @param categoria
-//	 *            Parametro del tipo Categoria
-//	 *            
-//	 */
-//	public void nuevaCategoria(Categoria categoria) {
-//		ICategoria categoria_dao = new CategoriaDAO();
-//		categoria_dao.insertar(categoria);
-//	}
-	
+		
 	/**
 	 * Metodo que devuelve verdadero si existe una categoria con ese nombre en la base de datos
 	 * 
@@ -139,16 +127,6 @@ public class Api {
 		categoria_dao.eliminar(id);
 	}
 	
-//	/**
-//	 * Metodo que modifica una categoria
-//	 * 
-//	 * @param categoria
-//	 * 			Variable de tipo Categoria
-//	 */
-//	public void modificarCategoria(Categoria categoria) {
-//		ICategoria categoria_dao = new CategoriaDAO();
-//		categoria_dao.modificar(categoria);
-//	}
 	
 	public void modificarCategoria(int id, String nombre) {
 		// TODO Auto-generated method stub
@@ -711,22 +689,6 @@ public class Api {
 		concurso_dao.insertar(concurso);
 	}
 	
-//	/**
-//	 * Metodo que devuelve verdadero si existe un concurso con ese codigo en la base de datos
-//	 * 
-//	 * @param codigo
-//	 * 			variable de tipo String
-//	 * 
-//	 * @return booleano
-//	 * 			Devuelve verdadero si ya existe, devuelve falso sino
-//	 */
-//	public boolean existeConcurso(String codigo) {
-//		IConcurso concurso_dao = new ConcursoDAO();
-//		if (concurso_dao.verificarExistente(codigo)) {
-//			return true;
-//		}
-//		return false;
-//	}
 	
 	/**
 	 * Metodo que devuelve un listado de todos los concursos
@@ -907,9 +869,6 @@ public class Api {
 		IPuesto puesto_dao = new PuestoDAO();
 		Concurso concurso = concurso_dao.concursoDadoId(id_concurso);
 		
-//		if (this.estadoConcurso(concurso)) {
-//			throw new RuntimeException ("el concurso ya se encuentra evauluado");
-//		}
 		// Seteo el "corregido" a true
 		concurso_dao.corregir(id_concurso);
 		
@@ -932,10 +891,6 @@ public class Api {
 	 * @return Inscripcion
 	 * 
 	 */
-//	public Inscripcion crearInscripcion(Concurso concurso, Participante participante) {
-//		Inscripcion inscripcion = new Inscripcion(concurso, participante);
-//		return inscripcion;
-//	}
 	
 	/**
 	 * Metodo para la persistencia de una inscripcion en la base de datos.
@@ -962,35 +917,10 @@ public class Api {
 		inscripcion_dao.eliminar(id_participante, id_concurso);
 	}
 	
-//	/**
-//	 * Metodo que devuelve verdadero si existe una inscripcion en la base de datos
-//	 * 
-//	 * @param inscripcion
-//	 * 			inscripcion a evaluar si ya existe en la base de datos
-//	 * 
-//	 * @return booleano
-//	 * 			Devuelve verdadero si ya existe, devuelve falso sino
-//	 */
-//	public boolean existeInscripcion(Inscripcion inscripcion) {
-//		IInscripcion inscripcion_dao = new InscripcionDAO();
-//		if (inscripcion_dao.verificarExistente(inscripcion.getParticipante().getId(), inscripcion.getConcurso().getId())) {
-//			return true;
-//		}
-//		return false;
-//	}
-	
-	/**
-	 * Metodo que devuelve un listado de todos los concursos con inscripcion cerrada que se inscribio el participante
-	 * 
-	 * @param id_participante
-	 * 				Variable de tipo int
-	 * 
-	 * @return 
-	 * 				Lista de objeto concurso
-	 */
-	public List<Concurso> listarConcursosConInscripcionCerradaInscripto(int id_participante) {
+
+	public List<Concurso> listarConcursosPublicacionAbiertaYcerrada(int id_participante) {
 		IConcurso concurso_dao = new ConcursoDAO();
-		return concurso_dao.listarConcursosConInscripcionCerradaInscripto(id_participante);
+		return concurso_dao.listaConcursoPublicacionAbiertaYcerradasInscripto(id_participante);
 	}
 	
 	//======================================================================
@@ -1099,14 +1029,6 @@ public class Api {
 		return concursoDAO.estadoConcurso(concurso);
 	}
 
-//	public void inscribirParticipante(int concursoCodigo, Participante participante) {
-//		
-//		IConcurso concursoDAO = new ConcursoDAO();
-//		Concurso concurso = concursoDAO.concurso(concursoCodigo);
-//		
-//		concurso.inscribirParticipante(participante);
-//		concursoDAO.nuevaInscripcion(concurso);
-//	}
 
 	public void nuevaPublicacion(int concursoCodigo, Participante participante, String text) {
 		
@@ -1135,17 +1057,6 @@ public class Api {
 		inscripcion_dao.eliminar(id_participante, concurso);
 	}
 
-//	public void inscribirParticipante(String concursoNombre, Participante participante) {
-//		// TODO Auto-generated method stub
-//		
-//			
-//			IConcurso concursoDAO = new ConcursoDAO();
-//			Concurso concurso = concursoDAO.concurso(concursoNombre);
-//			
-//			concurso.inscribirParticipante(participante);
-//			concursoDAO.nuevaInscripcion(concurso);
-//		
-//	}
 
 	public void inscribirParticipante(String codigoConcurso, int id_participante) {
 		
@@ -1192,20 +1103,17 @@ public class Api {
 		Concurso concurso = concursoDAO.concurso(codigo);
 		return concurso;
 	}
-
+	public Participante participanteConInscripciones(int id_participante) {
+		// TODO Auto-generated method stub
+		IParticipante participante_dao = new ParticipanteDAO();
+		Participante participante = participante_dao.participanteConInscripciones(id_participante);
+		return participante;
+	}
+	public Concurso concurso(int id_concurso) {
+		// TODO Auto-generated method stub
+		IConcurso concurso_dao = new ConcursoDAO();
+		Concurso concurso = concurso_dao.concursoDadoId(id_concurso);
+		return concurso;
+	}
 	
-
-	
-
-	
-
-	
-
-//	public Puesto_Administrar puesto_administrar(Api api, String idioma, int valueAt) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
-	
-
 }

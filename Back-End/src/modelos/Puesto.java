@@ -12,17 +12,6 @@ public class Puesto {
 	// Constructores
 	public Puesto () { }
 	
-	public Puesto (String posicion) {
-		this.posicion = posicion;
-	}
-	
-	public Puesto (int id, String posicion, Participante participante, Premio premio, Concurso concurso) {
-		this.id = id;
-		this.posicion = posicion;
-		this.participante = participante;
-		this.premio = premio;
-		this.concurso = concurso;
-	}
 	
 	public Puesto (String posicion, Concurso concurso, Premio premio) {
 		validarPremio(posicion);
@@ -51,6 +40,19 @@ public class Puesto {
         	throw new RuntimeException("Solo se permiten valores numericos");
         }
 	}
+	
+	public Puesto (String posicion) {
+		this.posicion = posicion;
+	}
+	
+	public Puesto (int id, String posicion, Participante participante, Premio premio, Concurso concurso) {
+		this.id = id;
+		this.posicion = posicion;
+		this.participante = participante;
+		this.premio = premio;
+		this.concurso = concurso;
+	}
+	
 	
 	// Getters
 	public int getId() {

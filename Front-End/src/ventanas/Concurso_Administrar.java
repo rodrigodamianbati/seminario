@@ -1,5 +1,7 @@
 package ventanas;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -25,6 +27,7 @@ import modelos.Categoria;
 import modelos.Concurso;
 
 import javax.swing.JComboBox;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 
 /**
@@ -48,16 +51,17 @@ public class Concurso_Administrar extends JFrame {
 	private JDateChooser fechaAperturaInscripcion, fechaCierreInscripcion, fechaAperturaPublicacion, fechaCierrePublicacion;
 	private Api api;
 
-	public Concurso_Administrar(String idioma) {	
+	public Concurso_Administrar(Api ap, String idioma) {	
 		// Creo la api
-		api = new Api();
+		api = ap;
 		
 		// Creo el bundle
 		bundle = ResourceBundle.getBundle(idioma);
 		
 		setTitle(bundle.getString("concurso.titulo"));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1134, 450);
+
+		setBounds(100, 100, 1500, 450);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -132,7 +136,7 @@ public class Concurso_Administrar extends JFrame {
 		contentPane.add(categoria);
 		
 		JButton btnVolverALa = new JButton(bundle.getString("volver.principal"));
-		btnVolverALa.setBounds(290, 387, 568, 23);
+		btnVolverALa.setBounds(415, 390, 568, 23);
 		contentPane.add(btnVolverALa);
 		btnVolverALa.addActionListener( e -> dispose() );
 		
@@ -178,7 +182,7 @@ public class Concurso_Administrar extends JFrame {
 		cargarHorarios(horaFinPublicacion);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(21, 186, 1095, 142);
+		scrollPane.setBounds(21, 186, 1298, 142);
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
@@ -202,7 +206,9 @@ public class Concurso_Administrar extends JFrame {
 					bundle.getString("publicacion.fecha_fin"),
 					bundle.getString("publicacion.hora_fin"),
 					bundle.getString("concurso.corregido"),
-					bundle.getString("listar.puestos_participantes"),
+					bundle.getString("listar.puestos"),
+					bundle.getString("concurso.administrar_evualuacion"),
+					bundle.getString("concurso.administrar_ganadores"),
 					bundle.getString("modificar"),
 					bundle.getString("eliminar")
 			}
@@ -211,7 +217,7 @@ public class Concurso_Administrar extends JFrame {
 			Class[] columnTypes = new Class[] {
 					Object.class, Object.class, Object.class, Object.class, Object.class, Object.class, Object.class, 
 					Object.class, Object.class, Object.class, Object.class, Object.class, Object.class, Object.class, 
-					Object.class, Boolean.class, Boolean.class, Boolean.class
+					Object.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class
 				};
 				@SuppressWarnings({ "unchecked", "rawtypes" })
 				public Class getColumnClass(int columnIndex) {
@@ -233,27 +239,169 @@ public class Concurso_Administrar extends JFrame {
 		table.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(0);
 		table.getTableHeader().getColumnModel().getColumn(4).setMinWidth(0);
 		
-		JButton btnNewButton = new JButton(bundle.getString("eliminar"));
-		btnNewButton.setBounds(21, 340, 334, 23);
-		contentPane.add(btnNewButton);
-		btnNewButton.addActionListener( e -> eliminarConcurso());
-		
-		JButton btnModificar = new JButton(bundle.getString("modificar"));
-		btnModificar.setBounds(379, 340, 369, 23);
-		contentPane.add(btnModificar);
-		btnModificar.addActionListener( e -> modificarConcurso() );
-		
-		JButton btnAgregarPuestos = new JButton(bundle.getString("listar.puestos_participantes"));
-		btnAgregarPuestos.setBounds(757, 340, 348, 23);
-		contentPane.add(btnAgregarPuestos);
-		btnAgregarPuestos.addActionListener( e -> agregarPuestos(idioma));
-		
 		JLabel lblListado = new JLabel(bundle.getString("concurso.lista"));
 		lblListado.setBounds(503, 161, 163, 14);
 		contentPane.add(lblListado);
 		
 		this.cargarCategorias();
 		this.listarConcursos();
+		
+		AbstractAction eliminarConcurso = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("concurso.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+						
+						api.eliminarConcurso((int) table.getValueAt(modelRow, 0));
+						
+						// Saco el concurso de la tabla
+						model.removeRow(modelRow);
+						JOptionPane.showMessageDialog(null, bundle.getString("concurso.exito.eliminar"));
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					listarConcursos();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn = new ButtonColumn(table, eliminarConcurso, 19);
+		buttonColumn.setMnemonic(KeyEvent.VK_D);
+		
+		AbstractAction modificar = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("concurso.desea_modificar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+				// 0=yes, 1=no, 2=cancel
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+	
+		
+						// Valido las fechas si estan vacias
+						validarFecha(table.getValueAt(modelRow, 6).toString(), bundle.getString("vacio.fechaAperturaInscripcion"));
+						validarFecha(table.getValueAt(modelRow, 8).toString(), bundle.getString("vacio.fechaCierreInscripcion"));
+						validarFecha(table.getValueAt(modelRow, 10).toString(), bundle.getString("vacio.fechaAperturaPublicacion"));
+						validarFecha(table.getValueAt(modelRow, 12).toString(), bundle.getString("vacio.fechaCierrePublicacion"));
+						
+						api.modificarConcurso((int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), table.getValueAt(modelRow, 2).toString(), 
+								table.getValueAt(modelRow, 3).toString(), table.getValueAt(modelRow, 5).toString()/*categoria*/,
+								LocalDate.parse(table.getValueAt(modelRow, 6).toString()),
+								LocalDate.parse(table.getValueAt(modelRow, 8).toString()),
+								LocalDate.parse(table.getValueAt(modelRow, 10).toString()),
+								LocalDate.parse(table.getValueAt(modelRow, 12).toString()),
+								Integer.parseInt(table.getValueAt(modelRow, 7).toString()), 
+								Integer.parseInt(table.getValueAt(modelRow, 9).toString()),
+								Integer.parseInt(table.getValueAt(modelRow, 11).toString()),
+								Integer.parseInt(table.getValueAt(modelRow, 13).toString()), 
+								Boolean.valueOf(table.getValueAt(modelRow, 14).toString()));
+								JOptionPane.showMessageDialog(null, bundle.getString("concurso.exito.modificar"));
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					listarConcursos();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn1 = new ButtonColumn(table, modificar, 18);
+		buttonColumn1.setMnemonic(KeyEvent.VK_D);
+		
+		AbstractAction listarPuestos = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+		
+				try {
+
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+					
+						Concurso concurso = api.concurso(table.getValueAt(modelRow, 1).toString());
+						
+						if (concurso.getEstado().equals("corregido")) {
+							JOptionPane.showMessageDialog(null, "Ya no pueden crearse nuevos puestos, el concurso ya fue realizado");
+						}
+						else {
+							Puesto_Administrar puesto = new Puesto_Administrar(api, idioma, concurso);
+							puesto.setVisible(true);
+						}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					listarConcursos();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn2 = new ButtonColumn(table, listarPuestos, 15);
+		buttonColumn2.setMnemonic(KeyEvent.VK_D);
+		
+		AbstractAction administrarJuradosYevaluacion = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+					
+						Concurso concurso = api.concurso(table.getValueAt(modelRow, 1).toString());
+						
+						if (!concurso.getEstado().equals("corregido")) {
+							Jueces_evaluaciones_Administrar puesto = new Jueces_evaluaciones_Administrar(api, idioma, concurso);
+							puesto.setVisible(true);
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Ya se encuentran los ganadores!");
+						}
+						
+
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					listarConcursos();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn4 = new ButtonColumn(table, administrarJuradosYevaluacion, 16);
+		buttonColumn4.setMnemonic(KeyEvent.VK_D);
+		
+		AbstractAction administrarGanadores = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+					
+						Concurso concurso = api.concurso(table.getValueAt(modelRow, 1).toString());
+						
+						if (concurso.getEstado().equals("corregido")) {
+							Ganadores_Administrar puesto = new Ganadores_Administrar(api, idioma, concurso);
+							puesto.setVisible(true);
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Primero debe realizarse el concurso!");
+						}
+						
+
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					listarConcursos();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn5 = new ButtonColumn(table, administrarGanadores, 17);
+		buttonColumn5.setMnemonic(KeyEvent.VK_D);
+		
 	}
 	
 	/**
@@ -283,10 +431,13 @@ public class Concurso_Administrar extends JFrame {
 					concurso.getHoraFinPublicacion(),
 					//concurso.getCorregido(),
 					concurso.getEstado(),
-					false,
-					false,
-					false
-				});		
+					bundle.getString("listar.puestos"),
+					bundle.getString("concurso.administrar_evualuacion"),
+					bundle.getString("concurso.administrar_ganadores"),
+					bundle.getString("modificar"),
+					bundle.getString("eliminar")
+				});
+				
 			}
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
@@ -313,11 +464,7 @@ public class Concurso_Administrar extends JFrame {
 
 				@Override
 				protected String doInBackground() {
-					try {
-						// Si el concurso ya existe muestro mensaje
-						if (api.existeConcurso(codigo.getText())) {
-							return bundle.getString("concurso.repetida");
-						}				
+					try {				
 						
 						// Valido las fechas si estan vacias
 						validarFechaConcurso(fechaAperturaInscripcion.getDate(), bundle.getString("vacio.fechaAperturaInscripcion"));
@@ -338,7 +485,7 @@ public class Concurso_Administrar extends JFrame {
 								horaInicioPublicacion.getSelectedIndex(), horaFinPublicacion.getSelectedIndex());
 						
 						// Guardo el concurso en la base de datos
-						api.nuevoConcurso(concurso);
+//						api.nuevoConcurso(concurso);
 						
 						// Vacio los inputs y seteo los comboBox
 						vaciarInputs();
@@ -358,132 +505,6 @@ public class Concurso_Administrar extends JFrame {
 	}
 	
 	/**
-	 * Metodo que modifica el concurso seleccionado en la base de datos
-	 */
-	private void modificarConcurso() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					listarConcursos();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cantidad de checkeados
-					int checkeados = cantidadCheckSeleccionados(16);
-					
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 16).toString());
-							if (checked) {
-								// Verifico que exista la categoria
-								if (!api.existeCategoria(table.getValueAt(i, 5).toString())) {
-									return bundle.getString("categoria.no_existe");
-								}
-				
-								// Valido las fechas si estan vacias
-								validarFecha(table.getValueAt(i, 6).toString(), bundle.getString("vacio.fechaAperturaInscripcion"));
-								validarFecha(table.getValueAt(i, 8).toString(), bundle.getString("vacio.fechaCierreInscripcion"));
-								validarFecha(table.getValueAt(i, 10).toString(), bundle.getString("vacio.fechaAperturaPublicacion"));
-								validarFecha(table.getValueAt(i, 12).toString(), bundle.getString("vacio.fechaCierrePublicacion"));
-								
-								// Devuelvo la categoria
-								Categoria categoria = api.categoria(table.getValueAt(i, 5).toString());
-								
-								// Creo el concurso
-								Concurso concurso = api.crearConcurso(
-										(int) table.getValueAt(i, 0), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(), 
-										table.getValueAt(i, 3).toString(), categoria,
-										LocalDate.parse(table.getValueAt(i, 6).toString()),
-										LocalDate.parse(table.getValueAt(i, 8).toString()),
-										LocalDate.parse(table.getValueAt(i, 10).toString()),
-										LocalDate.parse(table.getValueAt(i, 12).toString()),
-										Integer.parseInt(table.getValueAt(i, 7).toString()), 
-										Integer.parseInt(table.getValueAt(i, 9).toString()),
-										Integer.parseInt(table.getValueAt(i, 11).toString()),
-										Integer.parseInt(table.getValueAt(i, 13).toString()), 
-										Boolean.valueOf(table.getValueAt(i, 14).toString())
-								);
-								
-								// Modifico el concurso
-								api.modificarConcurso(concurso);
-								listarConcursos();
-								return bundle.getString("concurso.exito.modificar");
-							}
-						}
-						
-						listarConcursos();
-						return bundle.getString("concurso.repetida");
-					} else {
-						// Si no selecciono mas de uno o ninguno muestro mensaje en pantalla
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						} 
-						return bundle.getString("seleccionar.uno");
-					}
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-	
-	/**
-	 * Metodo que elimina el concurso seleccionado en la base de datos
-	 */
-	private void eliminarConcurso() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cantidad de checkeados
-					int checkeados = cantidadCheckSeleccionados(17);
-					
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 17).toString());
-							if (checked) {
-								// Elimino la categoria
-								api.eliminarConcurso((int) table.getValueAt(i, 0));
-								
-								// Saco el concurso de la tabla
-								model.removeRow(i);
-							}
-						}
-						
-						return bundle.getString("concurso.exito.eliminar");
-					} else {
-						// Si selecciono mas de uno o ninguno muestro mensaje
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						} 
-						return bundle.getString("seleccionar.uno");
-					}		
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-	
-	/**
 	 * Metodo que valida que una fecha no este vacia
 	 */
 	private void validarFechaConcurso(Date fecha, String mensaje) {
@@ -497,16 +518,18 @@ public class Concurso_Administrar extends JFrame {
 	 */
 	private void cargarCategorias() {
 		Api api = new Api();
-		List<Categoria> lista = api.listarCategorias();
 		
-		if (lista.isEmpty()) {
-			JOptionPane.showMessageDialog(null, bundle.getString("concurso.excepcion"));
-		}
-		
-		for (Categoria cat: lista){
-			categoria.addItem(cat);
-		}
-	}
+			List<Categoria> lista = api.listarCategorias();
+			
+			if (lista.isEmpty()) {
+				JOptionPane.showMessageDialog(null, bundle.getString("concurso.categoria_ex"));
+			}else {
+				for (Categoria cat: lista){
+					categoria.addItem(cat);
+				}
+			}
+			
+	}			
 	
 	/**
 	 * Metodo que agrega los horarios a los comboBox
@@ -543,78 +566,5 @@ public class Concurso_Administrar extends JFrame {
 		horaInicioPublicacion.setSelectedIndex(0);
 		horaFinPublicacion.setSelectedIndex(0);
 		categoria.setSelectedIndex(0);
-	}
-	
-	/**
-	 * Metodo que verifica cuantos check selecciono
-	 */
-	private int cantidadCheckSeleccionados(int columna) {
-		int cantidad = 0;
-		for (int i = 0; i < model.getRowCount(); i++) {
-			Boolean checked = Boolean.valueOf(table.getValueAt(i, columna).toString());
-			if (checked) {
-				cantidad++;
-			}
-		}
-		return cantidad;
-	}
-	/**
-	 * Metodo que crea la pantalla de puestos pasandole el idioma y el concurso
-	 * @param idioma
-	 */
-	private void agregarPuestos(String idioma) {		
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cantidad de checkeados
-					int checkeados = cantidadCheckSeleccionados(15);
-					
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						// Busco concurso a agregar premios
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 15).toString());
-							if (checked) {
-								// Creo la categoria
-								Categoria categoria = api.crearCategoria((int) table.getValueAt(i, 4), table.getValueAt(i, 5).toString());
-								Concurso concurso = api.crearConcurso(
-										(int) table.getValueAt(i, 0), table.getValueAt(i, 1).toString(),
-										table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString(), 
-										categoria, LocalDate.parse(table.getValueAt(i, 6).toString()),
-										LocalDate.parse(table.getValueAt(i, 8).toString()), 
-										LocalDate.parse(table.getValueAt(i, 10).toString()),
-										LocalDate.parse(table.getValueAt(i, 12).toString()),
-										(int) table.getValueAt(i, 7), (int) table.getValueAt(i, 9), (int) table.getValueAt(i, 11), 
-										(int) table.getValueAt(i, 13), Boolean.valueOf(table.getValueAt(i, 14).toString())
-								);
-								Puesto_Administrar puesto = new Puesto_Administrar(idioma, concurso);
-								puesto.setVisible(true);
-								listarConcursos();
-							}
-						}
-						return bundle.getString("puesto.excepcion");
-					} else {
-						// Si no selecciono mas de uno o ninguno muestro mensaje en pantalla
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						} else {
-							return bundle.getString("seleccionar.uno");
-						}
-					}
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
 	}
 }

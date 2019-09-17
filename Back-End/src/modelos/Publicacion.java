@@ -18,6 +18,21 @@ public class Publicacion {
 	// Constructores
 	public Publicacion() { }
 	
+	public Publicacion(Participante participante, Concurso concurso, String texto) {
+		validarPublicacion(texto);
+		this.participante = participante;
+		this.concurso = concurso;
+		this.texto = texto;
+		this.fecha = LocalDate.now();
+		this.hora = LocalDateTime.now().getHour();
+	}
+	
+	private void validarPublicacion(String texto) {
+		if (texto.isEmpty() || texto == "") {
+			throw new RuntimeException("Ingrese un texto para la publicacion");
+		}
+	}
+	
 	public Publicacion(int id, String texto) {
 		this.id = id;
 		this.texto = texto;
@@ -33,20 +48,6 @@ public class Publicacion {
 		this.texto = texto;
 	}
 	
-	public Publicacion(Participante participante, Concurso concurso, String texto) {
-		validarPublicacion(texto);
-		this.participante = participante;
-		this.concurso = concurso;
-		this.texto = texto;
-		this.fecha = LocalDate.now();
-		this.hora = LocalDateTime.now().getHour();
-	}
-	
-	private void validarPublicacion(String texto) {
-		if (texto.isEmpty() || texto == "") {
-			throw new RuntimeException("Ingrese un texto para la publicacion");
-		}
-	}
 	
 	// Getters
 	public int getId() {
@@ -89,5 +90,10 @@ public class Publicacion {
 	public void puntuar(int numero) {
 		// TODO Auto-generated method stub
 		this.puntaje = numero;
+	}
+
+	public void asignarParticipante(Participante participante2) {
+		// TODO Auto-generated method stub
+		this.participante = participante2;
 	}
 }

@@ -26,4 +26,6 @@ public interface IParticipante {
 	public List<Participante> noParticipantesPorSeleccion(String seleccion);
 
 	public Participante participante(int id);
+
+	public Participante participanteConInscripciones(int id_participante);
 }

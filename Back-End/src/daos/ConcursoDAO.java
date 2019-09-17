@@ -30,7 +30,7 @@ public class ConcursoDAO implements IConcurso {
 
 	private String corregir = "UPDATE concurso SET corregido = true WHERE id = ?";
 	
-	private String estado_ = "SELECT c.estado FROM concurso c WHERE c.id = ?";
+	private String estado_ = "SELECT c.corregido FROM concurso c WHERE c.id = ?";
 
 	private String eliminar = "DELETE FROM concurso WHERE id = ?";
 
@@ -47,6 +47,11 @@ public class ConcursoDAO implements IConcurso {
 			+ "FROM concurso c JOIN inscripcion i ON (c.id = i.id_concurso) "
 			+ "WHERE ( CURDATE() > DATE(c.fechaFinInscripcion) OR ( CURDATE() = DATE(c.fechaFinInscripcion) AND HOUR(NOW()) > c.horaFinInscripcion ) ) "
 			+ "AND i.id_participante = ?";
+	
+	private String listaConcursoPublicacionAbiertaYcerradasInscripto = "SELECT c.id, c.nombre "
+			+ "FROM concurso c JOIN inscripcion i ON (c.id = i.id_concurso) "
+			+ "WHERE ( CURDATE() > DATE(c.fechaInicioPublicacion) OR ( CURDATE() = DATE(c.fechaInicioPublicacion) AND HOUR(NOW()) > c.horaInicioPublicacion ) ) "
+			+ "AND i.id_participante = ?";
 
 	private String listaConcursoPublicacionAbierta = "SELECT c.id, c.nombre  "
 			+ "FROM concurso c JOIN inscripcion i ON (c.id = i.id_concurso) "
@@ -60,14 +65,13 @@ public class ConcursoDAO implements IConcurso {
 	
 	private String concursoDadoCodigo = "SELECT * FROM concurso c JOIN categoria cat ON (c.id_categoria=cat.id) WHERE c.codigo = ? ;";
 	
-//	private String concursoDadoId = "SELECT * FROM concurso c JOIN categoria cat ON (c.id_categoria=cat.id) WHERE c.nombre = ? ;";
-
-	
 	private String inscripciones = "SELECT * FROM concurso c JOIN inscripcion i ON (c.id=i.id_concurso) JOIN participante p ON (i.id_participante=p.id) WHERE c.id = ? ;";
 	
 	private String inscripcionesDadoCodigoConcurso = "SELECT * FROM concurso c JOIN inscripcion i ON (c.id=i.id_concurso) JOIN participante p ON (i.id_participante=p.id) WHERE c.codigo = ?";
 
 	private String nuevaInscripcion = "INSERT INTO `inscripcion` (`id`, `id_participante`, `id_concurso`, `fecha_inscripcion`, `hora_inscripcion`) VALUES (NULL, ? , ? , ? , ?)";
+
+	private String inscripcionesDadoIdConcurso = "SELECT * FROM concurso c JOIN inscripcion i ON (c.id=i.id_concurso) JOIN participante p ON (i.id_participante=p.id) WHERE c.id = ?";
 
 	/**
 	 * Metodo que inserta un nuevo concurso en la base de datos.
@@ -248,6 +252,9 @@ public class ConcursoDAO implements IConcurso {
 				while (rs.next()) {
 					lista.add(new Concurso(rs.getInt("id"), rs.getString("nombre")));
 				}
+				if (lista.isEmpty()) {
+					throw new RuntimeException("No hay concursos con publicaciones abiertas");
+				}
 				return lista;
 			} catch (SQLException e) {
 				throw new RuntimeException("Error al cargar la lista de concursos con inscripcion abierta");
@@ -272,6 +279,7 @@ public class ConcursoDAO implements IConcurso {
 				while (rs.next()) {
 					lista.add(new Concurso(rs.getInt("id"), rs.getString("nombre")));
 				}
+
 				return lista;
 			} catch (SQLException e) {
 				throw new RuntimeException("Error al cargar la lista de concursos que se inscribio");
@@ -292,6 +300,30 @@ public class ConcursoDAO implements IConcurso {
 				while (rs.next()) {
 					lista.add(new Concurso(rs.getInt("id"), rs.getString("nombre")));
 				}
+				
+				return lista;
+			} catch (SQLException e) {
+				throw new RuntimeException("Error al cargar la lista de concursos con inscripcion cerrada");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error al cargar la lista de concursos con inscripcion cerrada");
+		}
+	}
+	
+	@Override
+	public List<Concurso> listaConcursoPublicacionAbiertaYcerradasInscripto(int id_participante) {
+		ConexionDB conexion_db = new ConexionDB();
+		List<Concurso> lista = new ArrayList<Concurso>();
+		try (Connection connect = conexion_db.obtenerConexionBD();
+				PreparedStatement statement = connect.prepareStatement(this.listaConcursoPublicacionAbiertaYcerradasInscripto)) {
+			statement.setInt(1, id_participante);
+			try (ResultSet rs = statement.executeQuery()) {
+				while (rs.next()) {
+					lista.add(new Concurso(rs.getInt("id"), rs.getString("nombre")));
+				}
+				if (lista.isEmpty()) {
+					throw new RuntimeException("El participante no partipa de ningun concurso con publicaciones abiertas/cerradas");
+				}
 				return lista;
 			} catch (SQLException e) {
 				throw new RuntimeException("Error al cargar la lista de concursos con inscripcion cerrada");
@@ -301,6 +333,7 @@ public class ConcursoDAO implements IConcurso {
 		}
 	}
 
+	
 	@Override
 	public List<Concurso> listarConcursosConPublicacionAbierta(int id_participante) {
 		ConexionDB conexion_db = new ConexionDB();
@@ -312,6 +345,9 @@ public class ConcursoDAO implements IConcurso {
 				while (rs.next()) {
 					lista.add(new Concurso(rs.getInt("id"), rs.getString("nombre")));
 				}
+				if (lista.isEmpty()) {
+					throw new RuntimeException("Este participante no esta inscripto en ningun concurso con publicaciones abiertas");
+				}
 				return lista;
 			} catch (SQLException e) {
 				throw new RuntimeException("Error al cargar la lista de concursos con publicacion abierta");
@@ -322,10 +358,10 @@ public class ConcursoDAO implements IConcurso {
 	}
 
 	public void corregir(int id) {
-		Boolean corregido = this.estaCorregido(id);
-		if (corregido) {
-			throw new RuntimeException("El concurso ya fue corregido");
-		}
+//		Boolean corregido = this.estaCorregido(id);
+//		if (corregido) {
+//			throw new RuntimeException("El concurso ya fue corregido");
+//		}
 		ConexionDB conexion_db = new ConexionDB();
 		try (Connection connect = conexion_db.obtenerConexionBD();
 			PreparedStatement statement = connect.prepareStatement(this.corregir)) {
@@ -341,6 +377,7 @@ public class ConcursoDAO implements IConcurso {
 		try (Connection connect = conexion_db.obtenerConexionBD();
 				PreparedStatement statement = connect.prepareStatement(this.estado_)) {
 			statement.setInt(1, id);
+			System.out.println(statement);
 			try (ResultSet rs = statement.executeQuery()) {
 				boolean estado = false;
 				while (rs.next()) {
@@ -383,92 +420,6 @@ public class ConcursoDAO implements IConcurso {
 			throw new RuntimeException("Error al cargar el estado del concurso");
 		}
 	}
-
-//	@Override
-//	public Concurso concurso(int concursoCodigo) {
-//		// TODO Auto-generated method stub
-//		Concurso concurso = new Concurso();
-//		ConexionDB conexion_db = new ConexionDB();	
-//		try (Connection connect = conexion_db.obtenerConexionBD();
-//
-//			PreparedStatement statement = connect.prepareStatement(this.concurso)) {
-//			statement.setInt(1, concursoCodigo);
-//			
-//
-//			try (ResultSet rs = statement.executeQuery()) {
-//				while (rs.next()) {
-//					int id = rs.getInt("c.id");
-//					String codigo = rs.getString("c.codigo");
-//					String nombre = rs.getString("c.nombre");
-//					String hastag = rs.getString("c.hashtag");
-//					int id_categoria = rs.getInt("cat.id");
-//					String nombre_categoria = rs.getString("cat.nombre");
-//					int horaInicioInscripcion = rs.getInt("c.horaInicioInscripcion");
-//					int horaFinInscripcion = rs.getInt("c.horaFinInscripcion");
-//					int horaInicioPublicacion = rs.getInt("c.horaInicioPublicacion");
-//					int horaFinPublicacion = rs.getInt("c.horaFinPublicacion");
-//					Date fechaInicioInscripcion = rs.getDate("c.fechaInicioInscripcion");
-//					Date fechaFinInscripcion = rs.getDate("c.fechaFinInscripcion");
-//					Date fechaInicioPublicacion = rs.getDate("c.fechaInicioPublicacion");
-//					Date fechaFinPublicacion = rs.getDate("c.fechaFinPublicacion");
-//					boolean corregido = rs.getBoolean("c.corregido");
-//
-//					Categoria categoria = new Categoria(id_categoria, nombre_categoria);
-//					concurso = new Concurso(id, codigo, nombre, hastag, categoria, fechaInicioInscripcion.toLocalDate(),
-//							fechaFinInscripcion.toLocalDate(), fechaInicioPublicacion.toLocalDate(),
-//							fechaFinPublicacion.toLocalDate(), horaInicioInscripcion, horaFinInscripcion,
-//							horaInicioPublicacion, horaFinPublicacion, corregido);
-//				}
-//
-//				// concurso.setInscripciones();
-//			//	return concurso;
-//			} catch (SQLException e) {
-//				throw new RuntimeException("No pudo obtenerse el concurso dado");
-//			}
-//			
-//		} catch (SQLException e) {
-//			throw new RuntimeException("No pudo obtenerse el concurso dado");
-//		}
-//		
-//		//ConexionDB conexion_db2 = new ConexionDB();	
-//		try (Connection connect = conexion_db.obtenerConexionBD();
-//
-//			PreparedStatement statement = connect.prepareStatement(this.inscripciones)) {
-//			statement.setInt(1, concursoCodigo);
-//			System.out.println(concursoCodigo);
-//			try (ResultSet rs = statement.executeQuery()) {
-//				List<Inscripcion> inscripciones = new ArrayList<Inscripcion>();
-//				while (rs.next()) {
-//					int id = rs.getInt("i.id");
-//					Date fechaInscripcion = rs.getDate("i.fecha_inscripcion");
-//					int horaInscripcion = rs.getInt("i.hora_inscripcion");
-//					
-//					int id_participante = rs.getInt("p.id");
-//					String dni = rs.getString("p.dni");
-//					String nombre = rs.getString("p.nombre");
-//					String apellido = rs.getString("p.apellido");
-//					String email = rs.getString("p.email");
-//					
-//					Participante participante = new Participante(id_participante, nombre, apellido, dni, email);
-//				
-//					Inscripcion inscripcion = new Inscripcion(id, concurso, participante, fechaInscripcion.toLocalDate(), horaInscripcion);
-//					inscripciones.add(inscripcion);
-//
-//				}
-//				concurso.setInscripciones(inscripciones);
-//				
-//				// concurso.setInscripciones();
-//			//	return concurso;
-//			} catch (SQLException e) {
-//				throw new RuntimeException("No pudo obtenerse el listado de inscripciones al concurso dado");
-//			}
-//			
-//		} catch (SQLException e) {
-//			throw new RuntimeException("No pudo obtenerse el listado de inscripciones al concurso dado");
-//		}
-//		
-//		return concurso;
-//	}
 
 	@Override
 	public void nuevaInscripcion(Inscripcion inscripcion) {
@@ -529,8 +480,6 @@ public class ConcursoDAO implements IConcurso {
 							horaInicioPublicacion, horaFinPublicacion, corregido);
 				}
 
-				// concurso.setInscripciones();
-			//	return concurso;
 			} catch (SQLException e) {
 				throw new RuntimeException("No pudo obtenerse el concurso dado");
 			}
@@ -539,7 +488,6 @@ public class ConcursoDAO implements IConcurso {
 			throw new RuntimeException("No pudo obtenerse el concurso dado");
 		}
 		
-		//ConexionDB conexion_db2 = new ConexionDB();	
 		try (Connection connect = conexion_db.obtenerConexionBD();
 
 			PreparedStatement statement = connect.prepareStatement(this.inscripcionesDadoCodigoConcurso)) {
@@ -566,8 +514,6 @@ public class ConcursoDAO implements IConcurso {
 				}
 				concurso.setInscripciones(inscripciones);
 				
-				// concurso.setInscripciones();
-			//	return concurso;
 			} catch (SQLException e) {
 				throw new RuntimeException("No pudo obtenerse el listado de inscripciones al concurso dado");
 			}
@@ -613,8 +559,6 @@ public class ConcursoDAO implements IConcurso {
 							horaInicioPublicacion, horaFinPublicacion, corregido);
 				}
 
-				// concurso.setInscripciones();
-				return concurso;
 			} catch (SQLException e) {
 				throw new RuntimeException("No pudo obtenerse el concurso dado");
 			}
@@ -622,6 +566,43 @@ public class ConcursoDAO implements IConcurso {
 		} catch (SQLException e) {
 			throw new RuntimeException("No pudo obtenerse el concurso dado");
 		}
+		
+
+		try (Connection connect = conexion_db.obtenerConexionBD();
+
+			PreparedStatement statement = connect.prepareStatement(this.inscripcionesDadoIdConcurso )) {
+			statement.setInt(1, id_concurso);
+
+			try (ResultSet rs = statement.executeQuery()) {
+				List<Inscripcion> inscripciones = new ArrayList<Inscripcion>();
+				while (rs.next()) {
+					int id = rs.getInt("i.id");
+					Date fechaInscripcion = rs.getDate("i.fecha_inscripcion");
+					int horaInscripcion = rs.getInt("i.hora_inscripcion");
+					
+					int id_participante = rs.getInt("p.id");
+					String dni = rs.getString("p.dni");
+					String nombre = rs.getString("p.nombre");
+					String apellido = rs.getString("p.apellido");
+					String email = rs.getString("p.email");
+					
+					Participante participante = new Participante(id_participante, nombre, apellido, dni, email);
+				
+					Inscripcion inscripcion = new Inscripcion(id, concurso, participante, fechaInscripcion.toLocalDate(), horaInscripcion);
+					inscripciones.add(inscripcion);
+
+				}
+				concurso.setInscripciones(inscripciones);
+				
+			} catch (SQLException e) {
+				throw new RuntimeException("No pudo obtenerse el listado de inscripciones al concurso dado");
+			}
+			
+		} catch (SQLException e) {
+			throw new RuntimeException("No pudo obtenerse el listado de inscripciones al concurso dado");
+		}
+		
+		return concurso;
 	}
 
 }

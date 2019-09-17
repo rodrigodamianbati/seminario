@@ -36,29 +36,48 @@ public class Puesto_Administrar extends JFrame {
 
 	private JPanel contentPane;
 	private ResourceBundle bundle;
-	private JTextField posicion;
-	private JComboBox<Premio> premio;
-	private JComboBox<Jurado> jurado;
+	private JTextField posicion = new JTextField();
+	private JComboBox<Premio> premio = new JComboBox();
+	private JComboBox<Jurado> jurado = new JComboBox();
 	private JTable table, table2, table3;
 	private DefaultTableModel model, model2, model3;
 	private Api api;
-
-	public Puesto_Administrar(String idioma, Concurso concurso) {
+	private JScrollPane scrollPane = new JScrollPane();
+	private JScrollPane scrollPane2 = new JScrollPane();
+	private JScrollPane scrollPane3 = new JScrollPane();
+	private JLabel lblListaPremios = new JLabel();
+//	private JLabel lblListaParticipantes = new JLabel();
+	private JLabel lblPosicion = new JLabel();
+//	private JButton btnEvaluarPublicaciones = new JButton();
+//	private JLabel lblSeleccioneJurado = new JLabel();
+	private JButton btnAgregar = new JButton();
+//	private JButton btnAsignarPuestos = new JButton();
+	private JLabel lblPremio = new JLabel();
+	private JButton btnEliminar = new JButton();
+//	private JButton btnTwittear = new JButton();
+//	private JLabel lblParticipantes = new JLabel();
+	private JLabel lblPosiciones = new JLabel();
+	
+	private TableColumn tc = new TableColumn();
+	
+	public Puesto_Administrar(Api ap, String idioma, Concurso concurso) {
+		
 		// Creo la api
-		api = new Api();
+		api = ap;
 		
 		// Creo el bundle
 		bundle = ResourceBundle.getBundle(idioma);
 		
 		setTitle(bundle.getString("puesto.titulo") + concurso.getNombre() + " (#" + concurso.getHashtag() + ")");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1022, 402);
+//		setBounds(100, 100, 1022, 402);
+		setBounds(100, 100, 415, 402);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 135, 380, 144);
 		contentPane.add(scrollPane);
 		
@@ -69,14 +88,13 @@ public class Puesto_Administrar extends JFrame {
 			new Object[][] {},
 			new String[] {
 					bundle.getString("id"), bundle.getString("puesto.posicion"),
-					bundle.getString("nombre"), bundle.getString("apellido"), bundle.getString("dni"),
 					bundle.getString("id.premio"), bundle.getString("premio.nombre"),
 					bundle.getString("eliminar")
 			}
 		) {
 			@SuppressWarnings("rawtypes")
 			Class[] columnTypes = new Class[] {
-					Object.class, Object.class, Object.class, Object.class, Object.class, Object.class, Object.class, Boolean.class
+					Object.class, Object.class, Object.class, Object.class, Boolean.class
 				};
 				@SuppressWarnings({ "rawtypes", "unchecked" })
 				public Class getColumnClass(int columnIndex) {
@@ -89,111 +107,68 @@ public class Puesto_Administrar extends JFrame {
 		table.getColumnModel().getColumn(0).setMinWidth(0);
 		table.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
 		table.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
-		table.getColumnModel().getColumn(5).setMaxWidth(0);
-		table.getColumnModel().getColumn(5).setMinWidth(0);
-		table.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(0);
-		table.getTableHeader().getColumnModel().getColumn(5).setMinWidth(0);
+		table.getColumnModel().getColumn(2).setMaxWidth(0);
+		table.getColumnModel().getColumn(2).setMinWidth(0);
+		table.getTableHeader().getColumnModel().getColumn(2).setMaxWidth(0);
+		table.getTableHeader().getColumnModel().getColumn(2).setMinWidth(0);
 		
-		JScrollPane scrollPane2 = new JScrollPane();
-		scrollPane2.setBounds(415, 189, 581, 105);
-		contentPane.add(scrollPane2);
-		
-		table2 = new JTable();
-		scrollPane2.setViewportView(table2);
-		table2.setCellSelectionEnabled(true);
-		table2.setModel(new DefaultTableModel(
-			new Object[][] {},
-			new String[] {
-					bundle.getString("id"), bundle.getString("nombre"), bundle.getString("apellido"), bundle.getString("dni"),
-					bundle.getString("id"), bundle.getString("texto"), bundle.getString("puntaje")
-			}
-		) {
-			@SuppressWarnings("rawtypes")
-			Class[] columnTypes = new Class[] {
-					Object.class, Object.class, Object.class, Object.class,
-					Object.class, Object.class, Object.class
-				};
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				public Class getColumnClass(int columnIndex) {
-					return columnTypes[columnIndex];
-				}
-			}
-		);
-		model2 = (DefaultTableModel) table2.getModel();
-		table2.getColumnModel().getColumn(0).setMaxWidth(0);
-		table2.getColumnModel().getColumn(0).setMinWidth(0);
-		table2.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
-		table2.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
-		table2.getColumnModel().getColumn(4).setMaxWidth(0);
-		table2.getColumnModel().getColumn(4).setMinWidth(0);
-		table2.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(0);
-		table2.getTableHeader().getColumnModel().getColumn(4).setMinWidth(0);
-		
-		JScrollPane scrollPane3 = new JScrollPane();
-		scrollPane3.setBounds(415, 79, 581, 74);
-		contentPane.add(scrollPane3);
-		
-		table3 = new JTable();
-		scrollPane3.setViewportView(table3);
-		table3.setCellSelectionEnabled(true);
-		table3.setModel(new DefaultTableModel(
-			new Object[][] {},
-			new String[] {
-					bundle.getString("nombre"), bundle.getString("apellido"), bundle.getString("dni"), bundle.getString("email")
-			}
-		) {
-			@SuppressWarnings("rawtypes")
-			Class[] columnTypes = new Class[] {
-					Object.class, Object.class, Object.class, Object.class
-				};
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				public Class getColumnClass(int columnIndex) {
-					return columnTypes[columnIndex];
-				}
-			}
-		);
-		model3 = (DefaultTableModel) table3.getModel();
 		
 		JButton btnVolver = new JButton(bundle.getString("volver.concurso"));
-		btnVolver.setBounds(207, 330, 566, 23);
+
+		btnVolver.setBounds(88, 328, 250, 23);
 		contentPane.add(btnVolver);
 		btnVolver.addActionListener( e -> dispose() );
 		
-		JLabel lblListaPremios = new JLabel(bundle.getString("premio.lista"));
-		lblListaPremios.setBounds(10, 110, 89, 14);
+		lblListaPremios = new JLabel(bundle.getString("premio.lista"));
+
+		lblListaPremios.setBounds(10, 110, 150, 14);
 		contentPane.add(lblListaPremios);
 		
-		JLabel lblListaParticipantes = new JLabel(bundle.getString("participante_publicacion.lista"));
-		lblListaParticipantes.setBounds(415, 164, 245, 14);
-		contentPane.add(lblListaParticipantes);
+		
+		lblPosiciones = new JLabel(bundle.getString("puesto.posiciones"));
+		lblPosiciones.setBounds(68, 0, 300, 15);
+		contentPane.add(lblPosiciones);
 
 		this.listarPuestos(concurso.getId());
-		this.listarParticipantes(concurso.getId());
-		this.listarParticipantesConPublicacion(concurso.getId());
+		
+
+	
 		verificarConcursoCorregido(concurso);
+		
 	}
 	
 	private void verificarConcursoCorregido(Concurso concurso) {
-		//System.out.println(concurso.getEstado());
-		//System.out.println(concurso.getCodigo());
-		//System.out.println(concurso.getHashtag());
+	
 		boolean estadoConcurso = api.estadoConcurso(concurso);
-		System.out.println(estadoConcurso);
+
+		
 		if (!estadoConcurso) {
-			// Dia actual
-			LocalDate hoy = LocalDate.now();			
 			
-			// Hora actual
+			lblPosiciones.setVisible(true);
+			this.lblPosicion.setVisible(false);
+			this.posicion.setVisible(false);
+			this.btnAgregar.setVisible(false);
+			this.lblPremio.setVisible(true);
+			this.lblListaPremios.setVisible(true);
+			
+			this.scrollPane.setVisible(true);
+//			this.
+			
+//			// Dia actual
+			LocalDate hoy = LocalDate.now();			
+//			
+//			// Hora actual
 			int hora = LocalTime.now().getHour();
-						
-			JLabel lblPosicion = new JLabel(bundle.getString("puesto.posicion"));
-			lblPosicion.setBounds(10, 11, 69, 14);
+
+			lblPosicion = new JLabel(bundle.getString("puesto.posicion"));
+			lblPosicion.setBounds(10, 11, 150, 14);
 			contentPane.add(lblPosicion);
+			
 			
 			lblPosicion.removeAll();
 			
 			posicion = new JTextField();
-			posicion.setBounds(10, 36, 171, 20);
+			posicion.setBounds(10, 36, 150, 20);
 			contentPane.add(posicion);
 			posicion.setColumns(10);
 			
@@ -201,104 +176,25 @@ public class Puesto_Administrar extends JFrame {
 			premio.setBounds(195, 36, 156, 20);
 			contentPane.add(premio);
 			
-			JButton btnAgregar = new JButton(bundle.getString("puesto.agregar"));
+			btnAgregar = new JButton(bundle.getString("puesto.agregar"));
 			btnAgregar.setBounds(88, 67, 189, 23);
 			contentPane.add(btnAgregar);
 			btnAgregar.addActionListener( e -> guardarPuesto(concurso));
 			
-			JLabel lblPremio = new JLabel(bundle.getString("puesto.premio"));
-			lblPremio.setBounds(199, 11, 96, 14);
+			lblPremio = new JLabel(bundle.getString("puesto.premio"));
+			lblPremio.setBounds(199, 11, 150, 14);
 			contentPane.add(lblPremio);
 			
-			JButton btnEliminar = new JButton(bundle.getString("eliminar"));
+			btnEliminar = new JButton(bundle.getString("eliminar"));
 			btnEliminar.setBounds(62, 291, 273, 23);
 			contentPane.add(btnEliminar);
 			btnEliminar.addActionListener( e -> eliminarPuesto(concurso.getId()));
-
-			if (hoy.isAfter(concurso.getFechaFinPublicacion()) || ( hoy.isEqual(concurso.getFechaFinPublicacion()) && hora > concurso.getHoraFinPublicacion()) ) {
-				JButton btnEvaluarPublicaciones = new JButton(bundle.getString("publicacion.evaluar"));
-				btnEvaluarPublicaciones.setBounds(532, 23, 171, 23);
-				contentPane.add(btnEvaluarPublicaciones);
-				btnEvaluarPublicaciones.addActionListener( e -> evaluarPublicaciones(concurso));
-				
-				jurado = new JComboBox<Jurado>();
-				jurado.setBounds(415, 24, 96, 20);
-				contentPane.add(jurado);
-				
-				JLabel lblSeleccioneJurado = new JLabel(bundle.getString("jurado.seleccionar"));
-				lblSeleccioneJurado.setBounds(415, 11, 107, 14);
-				contentPane.add(lblSeleccioneJurado);
-				
-				JButton btnAsignarPuestos = new JButton(bundle.getString("puesto.asignar"));
-				btnAsignarPuestos.setBounds(713, 23, 220, 23);
-				contentPane.add(btnAsignarPuestos);
-				btnAsignarPuestos.addActionListener(e -> asignarPuestos(concurso));
-				
-				this.agregarJurados();
-			}
 		
 			this.agregarPremios();
-		} else {
-			JButton btnTwittear = new JButton(bundle.getString("twittear"));
-			btnTwittear.setBounds(874, 305, 89, 23);
-			contentPane.add(btnTwittear);
-			
-			JLabel lblParticipantes = new JLabel(bundle.getString("participantes"));
-			lblParticipantes.setBounds(415, 54, 116, 14);
-			contentPane.add(lblParticipantes);
-			btnTwittear.addActionListener( e -> publicarTwitter(concurso));
-			
-			TableColumn tc = table.getColumnModel().getColumn(7);
-			table.removeColumn(tc);
 		}
 	}
 	
-	/**
-	 * Metodo que lista solo los participantes inscriptos
-	 */
-	private void listarParticipantes(int id) {
-		try {
-			// Se vacia la tabla
-			model3.setRowCount(0);
-			
-			// Se agrega los premios a la tabla
-			for (Participante participante: api.listarParticipantesConcurso(id)) {
-				model3.addRow(new Object[]{
-					participante.getNombre(),
-					participante.getApellido(),
-					participante.getDni(),
-					participante.getEmail()
-				});
-			}
-		} catch(Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-	}
 
-	/**
-	 * Metodo que publica en twitter
-	 */
-	private void publicarTwitter(Concurso concurso) {
-		// Si no hay ningun ganador no se publica
-		if (table.getValueAt(0, 2) == null) {
-			JOptionPane.showMessageDialog(null, bundle.getString("concurso_no_participante"));
-		} else {
-			// Texto a mostrar
-			String twit = "Los ganadores del concurso " + concurso.getNombre() + " (#" + concurso.getHashtag() + ") son : \n";
-			
-			// Se recorre los puestos
-			for (int i = 0; i < model.getRowCount(); i++) {
-				if (table.getValueAt(i, 2) != null) {
-					twit += table.getValueAt(i, 1) + ") " + table.getValueAt(i, 2) + " " + table.getValueAt(i, 3) + "(DNI: " + table.getValueAt(i, 4) +  "), gano " + table.getValueAt(i, 6) + "\n";
-				}
-			}
-			
-			twit += "Felicidades a los ganadores y a todos los que participaron.";
-			
-			// Se publica en twitter el ranking
-			api.publicarTweetRanking(twit);
-		}
-	}
 	
 	/**
 	 * Metodo que devuelve todos los puestos y los muestra en la tabla
@@ -316,9 +212,6 @@ public class Puesto_Administrar extends JFrame {
 				model.addRow(new Object[]{
 					puesto.getId(),
 					puesto.getPosicion(),
-					puesto.getParticipante().getNombre(),
-					puesto.getParticipante().getApellido(),
-					puesto.getParticipante().getDni(),
 					puesto.getPremio().getId(),
 					puesto.getPremio().getNombre(),
 					false
@@ -329,52 +222,6 @@ public class Puesto_Administrar extends JFrame {
 		}
 	}
 	
-	/**
-	 * Metodo que devuelve todos los participantes y los muestra en la tabla
-	 * 
-	 * @param id
-	 * 			parametro de tipo int
-	 */
-	public void listarParticipantesConPublicacion(int id) {
-		try {
-			// Se vacia la tabla
-			model2.setRowCount(0);
-			
-			// Se agrega los premios a la tabla
-			for (Participante participante: api.listarParticipantesConcursoConPublicacion(id)) {
-				if (!repetido(participante.getId())) {
-					model2.addRow(new Object[]{
-						participante.getId(),
-						participante.getNombre(),
-						participante.getApellido(),
-						participante.getDni(),
-						participante.getPublicacion().getId(),
-						participante.getPublicacion().getTexto(),
-						participante.getPublicacion().getPuntaje()
-					});
-				}
-			}
-		} catch(Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-	}
-	
-	/**
-	 * Metodo que dice si ya se mostro la ultima publicacion del participante
-	 * 
-	 * @param id
-	 * 		parametro de tipo int, id del participante
-	 * @return
-	 * 		booleano 
-	 */
-	private boolean repetido(int id) {
-		for (int i = 0; i < model2.getRowCount(); i++) {
-			if (id == (int) table2.getValueAt(i, 0)) {
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	/**
 	 * Metodo que guarda el puesto en la base de datos
@@ -399,14 +246,6 @@ public class Puesto_Administrar extends JFrame {
 					try {
 						// Se crea el Puesto
 						Puesto puesto = api.crearPuesto(posicion.getText(), concurso, (Premio) premio.getSelectedItem());
-						
-						// Si el puesto ya existe no se permite la creacion de este y se muestra mensaje
-						if (api.existePuesto(puesto)) {
-							return bundle.getString("puesto.repetida");
-						}
-						
-						// Se guarda el concurso en la base de datos
-						api.guardarPuesto(puesto);
 						
 						// Se vacian los inputs y se recargan el comboBox
 						vaciarInputs();
@@ -442,13 +281,13 @@ public class Puesto_Administrar extends JFrame {
 			protected String doInBackground() {
 				try {
 					// Variable entera que indica cantidad seleccionados
-					int checkeados = cantidadCheckSeleccionados(7);
+					int checkeados = cantidadCheckSeleccionados(4);
 					
 					// Si un solo elemento es seleccionado se realiza la operacion
 					if (checkeados == 1) {
 						// Busco puesto a eliminar
 						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 7).toString());
+							Boolean checked = Boolean.valueOf(table.getValueAt(i, 4).toString());
 							if (checked) {
 								// Se elimina el puesto
 								api.eliminarPuesto((int) table.getValueAt(i, 0), id_concurso);
@@ -491,17 +330,7 @@ public class Puesto_Administrar extends JFrame {
 			premio.addItem(prem);
 		}
 	}
-	
-	/**
-	 * Metodo que agrega los jurados a la lista (comboBox)
-	 */
-	private void agregarJurados() {
-		List<Jurado> lista = api.listarJurados();
-		
-		for (Jurado jura: lista){
-			jurado.addItem(jura);
-		}
-	}
+
 	
 	/**
 	 * Metodo que verifica cuantos check selecciono
@@ -517,55 +346,7 @@ public class Puesto_Administrar extends JFrame {
 		return cantidad;
 	}
 	
-	private void evaluarPublicaciones(Concurso concurso) {
-		// Se asigna puntajes a las publicaciones
-		asignarPuntaje(6);
-		
-		// Jurado evaluador
-		Jurado juradoEvaluador = (Jurado) jurado.getSelectedItem();
-		
-		// Lista de publicaciones
-		List<Publicacion> publicaciones = new ArrayList<Publicacion>();
-		
-		// Se agrega las publicaciones a la lista de publicaciones
-		for (int i = 0; i < model2.getRowCount(); i++) {
-			publicaciones.add(
-					api.crearPublicacion((int) table2.getValueAt(i, 4), table2.getValueAt(i, 5).toString(), 
-							(int) table2.getValueAt(i, 6))
-			);
-		}
-		
-		// Se le asigna el jurado y las notas a las publicaciones
-		api.corregirPublicaciones(publicaciones, juradoEvaluador);
-		
-		// Se ordena la tabla de participante
-		listarParticipantesConPublicacion(concurso.getId());
-	}
-	
-	private void asignarPuestos(Concurso concurso) {
-		// Se recorre de acuerdo a la cantidad de premios que hay y se le asigna los participantes que ganaron
-		for (int i = 0; i < table.getRowCount() ;i++) {
-			if (i < table2.getRowCount()) {
-				api.asignarGanador(concurso.getId(), (int) table.getValueAt(i, 0), (int) table2.getValueAt(i, 0));
-			}
-		}
-				
-		// Se actualiza la tabla de puestos
-		listarPuestos(concurso.getId());
-	}
-	
-	/**
-	 * Metodo que asigna un puntaje aleatorio a las publicaciones
-	 * @param columna
-	 */
-	private void asignarPuntaje(int columna) {
-		int min = 0;
-		int max = 10;
-		Random random = new Random();
-		for (int i = 0; i < model2.getRowCount(); i++) {
-			int valor = random.nextInt(max - min + 1) + min;
-			table2.setValueAt(valor, i, columna);
-		}
-	}
-}
 
+	
+	
+}

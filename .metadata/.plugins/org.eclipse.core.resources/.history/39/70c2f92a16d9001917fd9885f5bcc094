@@ -1,0 +1,569 @@
+package modelos;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+public class Concurso {
+
+	// Variables
+	private int id;
+	private String codigo;
+	private String nombre;
+	private Categoria categoria;
+	private LocalDate aperturaInscripcion;
+	private LocalDate cierreInscripcion;
+	private LocalDate aperturaPublicacion;
+	private LocalDate cierrePublicacion;
+	private int horaAperturaInscripcion;
+	private int horaFinInscripcion;
+	private int horaAperturaPublicacion;
+	private int horaFinPublicacion;
+	private String hashtag;
+	private boolean corregido;
+	private List<Puesto> puestos = new ArrayList<Puesto>();
+	private List<Inscripcion> inscripciones = new ArrayList<Inscripcion>();
+	private List<Publicacion> publicaciones = new ArrayList<Publicacion>();
+	private List<Jurado> jurado = new ArrayList<Jurado>();
+	private Inscripcion ultimoInscripto;
+	private Publicacion ultimaPublicacion;
+
+	/* constructores */
+	public Concurso() { }
+	
+	public Concurso(int id) {
+		this.id = id;
+	}
+	
+	public Publicacion ultimaPublicacion() {
+		
+		return this.ultimaPublicacion;
+	}
+	
+	public Concurso(int id, String nombre) { 
+		this.id = id;
+		this.nombre = nombre;
+	}
+	
+	public Concurso(String codigo, String nombre, String hashtag, Categoria categoria, LocalDate aperturaInscripcion,
+			LocalDate cierreInscripcion, LocalDate aperturaPublicacion, LocalDate cierrePublicacion, int horaInicioInscripcion,
+			int horaFinInscripcion, int horaInicioPublicacion, int horaFinPublicacion) {
+		validarConcurso(codigo, nombre, hashtag, categoria);
+		validarFechas(aperturaInscripcion, cierreInscripcion, aperturaPublicacion, cierrePublicacion, horaInicioInscripcion,
+				horaFinInscripcion, horaInicioPublicacion, horaFinPublicacion);
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.hashtag = hashtag;
+		this.categoria = categoria;
+		this.aperturaInscripcion = aperturaInscripcion;
+		this.cierreInscripcion = cierreInscripcion;
+		this.aperturaPublicacion = aperturaPublicacion;
+		this.cierrePublicacion = cierrePublicacion;
+		this.horaAperturaInscripcion = horaInicioInscripcion;
+		this.horaFinInscripcion = horaFinInscripcion;
+		this.horaAperturaPublicacion = horaInicioPublicacion;
+		this.horaFinPublicacion = horaFinPublicacion;
+		this.corregido = false;
+	}
+
+	public Concurso(int id, String codigo, String nombre, String hashtag, Categoria categoria, LocalDate aperturaInscripcion,
+			LocalDate cierreInscripcion, LocalDate aperturaPublicacion, LocalDate cierrePublicacion, int horaInicioInscripcion,
+			int horaFinInscripcion, int horaInicioPublicacion, int horaFinPublicacion, boolean corregido) {
+		validarConcurso(codigo, nombre, hashtag, categoria);
+		validarFechass(aperturaInscripcion, cierreInscripcion, aperturaPublicacion, cierrePublicacion, horaInicioInscripcion,
+				horaFinInscripcion, horaInicioPublicacion, horaFinPublicacion);
+		this.id = id;
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.hashtag = hashtag;
+		this.categoria = categoria;
+		this.aperturaInscripcion = aperturaInscripcion;
+		this.cierreInscripcion = cierreInscripcion;
+		this.aperturaPublicacion = aperturaPublicacion;
+		this.cierrePublicacion = cierrePublicacion;
+		this.horaAperturaInscripcion = horaInicioInscripcion;
+		this.horaFinInscripcion = horaFinInscripcion;
+		this.horaAperturaPublicacion = horaInicioPublicacion;
+		this.horaFinPublicacion = horaFinPublicacion;
+		this.corregido = corregido;
+	}
+	
+	public Concurso(int id, String codigo, String nombre, String hashtag, Categoria categoria, LocalDate aperturaInscripcion,
+			LocalDate cierreInscripcion, LocalDate aperturaPublicacion, LocalDate cierrePublicacion, int horaInicioInscripcion,
+			int horaFinInscripcion, int horaInicioPublicacion, int horaFinPublicacion, boolean corregido, List<Inscripcion> inscripciones) {
+		validarConcurso(codigo, nombre, hashtag, categoria);
+		validarFechass(aperturaInscripcion, cierreInscripcion, aperturaPublicacion, cierrePublicacion, horaInicioInscripcion,
+				horaFinInscripcion, horaInicioPublicacion, horaFinPublicacion);
+		this.id = id;
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.hashtag = hashtag;
+		this.categoria = categoria;
+		this.aperturaInscripcion = aperturaInscripcion;
+		this.cierreInscripcion = cierreInscripcion;
+		this.aperturaPublicacion = aperturaPublicacion;
+		this.cierrePublicacion = cierrePublicacion;
+		this.horaAperturaInscripcion = horaInicioInscripcion;
+		this.horaFinInscripcion = horaFinInscripcion;
+		this.horaAperturaPublicacion = horaInicioPublicacion;
+		this.horaFinPublicacion = horaFinPublicacion;
+		this.corregido = corregido;
+		this.inscripciones = inscripciones;
+	}
+	
+	public Concurso(String codigo) {
+		// TODO Auto-generated constructor stub
+		this.codigo = codigo;
+		this.nombre = "     ";
+	}
+
+	/**
+	 * Metodo que valida que el valor no sea vacio
+	 * 
+	 * @param codigo
+	 *            parametro del tipo string
+	 * @param nombre
+	 *            parametro del tipo string 
+	 * @param hashtag
+	 *            parametro del tipo String            
+	 */
+	private void validarConcurso(String codigo, String nombre, String hashtag, Categoria categoria) {
+		if(codigo.isEmpty() || codigo == ""){
+			throw new RuntimeException("Ingrese un codigo");
+		}
+		if(nombre.isEmpty() || nombre == ""){
+			throw new RuntimeException("Ingrese un nombre");
+		}
+		if(hashtag.isEmpty() || hashtag == ""){
+			throw new RuntimeException("Ingrese un hashtag");
+		}
+		if (categoria == null){
+			throw new RuntimeException("Ingrese una categoria");
+		}
+	}
+	
+	/**
+	 * Metodo que valida las fechas y los horarios
+	 *
+	 * @param fechaApertura
+	 *            parametro del tipo LocalDate 
+	 * @param fechaCierre
+	 *            parametro del tipo LocalDate 
+	 */
+	private void validarFechas(LocalDate aperturaInscripcion, LocalDate cierreInscripcion, LocalDate aperturaPublicacion,
+			LocalDate cierrePublicacion, int horaAperturaInscripcion, int horaCierreInscripcion, int horaAperturaPublicacion, 
+			int horaCierrePublicacion) {
+		LocalDate hoy = LocalDate.now();
+		@SuppressWarnings("deprecation")
+		int horaActual = Calendar.getInstance().getTime().getHours();
+		if (aperturaInscripcion.isBefore(hoy)) {
+			throw new RuntimeException("La fecha de apertura de inscripcion no debe ser anterior a la fecha actual");
+		} else {
+			if (aperturaInscripcion.isEqual(hoy) && horaActual >= horaAperturaInscripcion){
+				throw new RuntimeException("La hora de apertura de inscripcion debe ser posterior a la hora actual");
+			}
+		}
+		if (cierreInscripcion.isBefore(aperturaInscripcion)) {
+			throw new RuntimeException("La fecha de cierre inscripcion no debe ser anterior a la fecha de apertura de inscripcion");
+		} else {
+			if(aperturaInscripcion.isEqual(cierreInscripcion) && horaAperturaInscripcion >= horaCierreInscripcion) {
+				throw new RuntimeException("La hora de cierre de inscripcion debe ser posterior a la hora de apertura de inscripcion");
+			}
+		}
+		if (aperturaPublicacion.isBefore(cierreInscripcion)) {
+			throw new RuntimeException("La fecha de apertura publicacion no debe ser anterior a la fecha de cierre de inscripcion");
+		}
+		//else {
+			//if(aperturaPublicacion.isEqual(cierreInscripcion) && horaCierreInscripcion >= horaAperturaPublicacion) {
+			////}
+		//}
+		if (cierrePublicacion.isBefore(aperturaPublicacion)) {
+			throw new RuntimeException("La fecha de cierre publicacion no debe ser anterior a la fecha de apertura de publicacion");
+		} else {
+			if(aperturaPublicacion.isEqual(cierrePublicacion) && horaAperturaPublicacion >= horaCierrePublicacion) {
+				throw new RuntimeException("La hora de cierre de publicacion debe ser posterior a la hora de apertura de publicacion");
+			}
+		}
+	}
+	
+	/**
+	 * Metodo que valida las fechas y los horarios
+	 *
+	 * @param fechaApertura
+	 *            parametro del tipo LocalDate 
+	 * @param fechaCierre
+	 *            parametro del tipo LocalDate 
+	 */
+	private void validarFechass(LocalDate aperturaInscripcion, LocalDate cierreInscripcion, LocalDate aperturaPublicacion,
+			LocalDate cierrePublicacion, int horaAperturaInscripcion, int horaCierreInscripcion, int horaAperturaPublicacion, 
+			int horaCierrePublicacion) {
+		if (cierreInscripcion.isBefore(aperturaInscripcion)) {
+			throw new RuntimeException("La fecha de cierre inscripcion no debe ser anterior a la fecha de apertura de inscripcion");
+		} else {
+			if(aperturaInscripcion.isEqual(cierreInscripcion) && horaAperturaInscripcion >= horaCierreInscripcion) {
+				throw new RuntimeException("La hora de cierre de inscripcion debe ser posterior a la hora de apertura de inscripcion");
+			}
+		}
+		if (aperturaPublicacion.isBefore(cierreInscripcion)) {
+			throw new RuntimeException("La fecha de apertura publicacion no debe ser anterior a la fecha de cierre de inscripcion");
+		} //else {
+			//if(aperturaPublicacion.isEqual(cierreInscripcion) && horaCierreInscripcion >= horaAperturaPublicacion) {
+			//	throw new RuntimeException("La hora de apertura de publicacion debe ser posterior a la hora de apertura de inscripcion");
+			//}
+		//}
+		if (cierrePublicacion.isBefore(aperturaPublicacion)) {
+			throw new RuntimeException("La fecha de cierre publicacion no debe ser anterior a la fecha de apertura de publicacion");
+		} else {
+			if(aperturaPublicacion.isEqual(cierrePublicacion) && horaAperturaPublicacion >= horaCierrePublicacion) {
+				throw new RuntimeException("La hora de cierre de publicacion debe ser posterior a la hora de apertura de publicacion");
+			}
+		}
+	}
+	
+	/**
+	 * Metodo que utiliza los metodos <<validarFechaInscripcion>> y <<estaInscripto(participante)>> 
+	 * para validar y si es posible inscribe un participante a este concurso
+	 *
+	 * @param p
+	 *            parametro del tipo Partipante
+	 */
+	
+	
+	public void inscribirParticipante(Participante p) {
+		
+		this.validarFechaInscripcion();
+		
+		if (!this.estaInscripto(p)) {
+			Inscripcion inscripcion = new Inscripcion (this, p, LocalDate.now(), LocalDateTime.now().getHour());
+			this.inscripciones.add(inscripcion);
+			this.ultimoInscripto = inscripcion;
+		}else {
+			throw new RuntimeException("Este participante ya se encuentra inscripto en este concurso");
+		}
+	}
+	
+	/**
+	 * Metodo que verficia si un partipante ya se encuentra inscripto en el concurso
+	 *
+	 * @param participante
+	 *            parametro del tipo Participante 
+	 */
+	
+	private boolean estaInscripto(Participante participante) {
+		
+		for (Inscripcion inscripcion : inscripciones) {
+			if (inscripcion.esElParticipante(participante)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * Metodo que verifica las fechas y horarios actuales con el apertura y cierre de inscripciones a este concurso
+	 * 
+	 * */
+	
+	private void validarFechaInscripcion() {
+		if (this.cierreInscripcion.isBefore(LocalDate.now())) {
+			throw new RuntimeException("No puede anotarse a este concurso, ya ha cerrado su incripcion!");
+		}
+		if (this.aperturaInscripcion.isAfter(LocalDate.now())) {
+			throw new RuntimeException("El concurso aun no ha abierto su incripción");
+		}
+		if (this.aperturaInscripcion.isEqual(LocalDate.now())) {
+			if (this.horaAperturaInscripcion > LocalDateTime.now().getHour()) {
+				throw new RuntimeException("El concurso aun no ha abierto, abrira dentro de unas horas");
+			}else if (this.horaFinInscripcion < LocalDateTime.now().getHour()) {
+				throw new RuntimeException("No puede anotarse a este concurso, ya ha cerrado su incripcion!");
+			}
+		}
+	}
+	
+	/**
+	 * Metodo que utiliza los metodos <<validarFechaPublicacion>> y <<estaInscripto(participante)>> 
+	 * para validar y si es posible agregar una nueva publicacion a este concurso por parte de este participante
+	 *
+	 * @param participante
+	 *            parametro del tipo Partipante
+	 * @param publicacion
+	 *            parametro del tipo Publicacion            
+	 **/
+	
+	public void agregarNuevaPublicacion(Participante participante, Publicacion publicacion) {
+		
+		this.validarFechaPublicacion();
+		
+		if (this.estaInscripto(participante)) {
+			publicacion.asignarParticipante(participante);
+			this.publicaciones.add(publicacion);
+			this.ultimaPublicacion = publicacion;
+		}else {
+			throw new RuntimeException("Este participante no se encuentra inscripto en este concurso, no puedo agregar publicaciones a dicho concurso");
+		}
+	}
+	
+	
+	/**
+	 * Metodo que verifica las fechas y horarios actuales con el apertura y cierre de publicaciones a este concurso
+	 * 
+	 * */
+	
+	private void validarFechaPublicacion() {
+		if (this.cierrePublicacion.isBefore(LocalDate.now())) {
+			throw new RuntimeException("No puede subirse nuevas publicaciones a este concurso, ya ha cerrado el ingreso de nuevas publicaciones!");
+		}
+		if (this.aperturaPublicacion.isAfter(LocalDate.now())) {
+			throw new RuntimeException("Aun no pueden agregarse publicaciones a este concurso, debe esperar a la fecha de apertura de publicacion");
+		}
+		if (this.aperturaPublicacion.isEqual(LocalDate.now())) {
+			if (this.horaAperturaPublicacion > LocalDateTime.now().getHour()) {
+				throw new RuntimeException("Aun no pueden agregarse nuevas publicaciones a este concurso, abrira dentro de unas horas");
+			}else if (this.horaFinPublicacion < LocalDateTime.now().getHour()) {
+				throw new RuntimeException("No puede agregarse nuevas publicaciones a este concurso, ya ha cerrado!");
+			}
+		}
+	}
+	
+	// Getters
+	public int getId() {
+		return id;
+	}
+	
+	public String getNombre() {
+		return this.nombre;
+	}
+	
+	public String getCodigo(){
+		return this.codigo;
+	}
+	
+	public Categoria getCategoria() {
+		return this.categoria;
+	}
+	
+	public LocalDate getFechaInicioInscripcion(){
+		return this.aperturaInscripcion;
+	}
+	
+	public int getHoraInicioInscripcion(){
+		return this.horaAperturaInscripcion;
+	}
+	
+	public LocalDate getFechaFinInscripcion() {
+		return this.cierreInscripcion;
+	}
+	
+	public int getHoraFinInscripcion(){
+		return this.horaFinInscripcion;
+	}
+	
+	public LocalDate getFechaInicioPublicacion(){
+		return this.aperturaPublicacion;
+	}
+	
+	public int getHoraInicioPublicacion() {
+		return this.horaAperturaPublicacion;
+	}
+	
+	public LocalDate getFechaFinPublicacion() {
+		return this.cierrePublicacion;
+	}
+	
+	public int getHoraFinPublicacion(){
+		return this.horaFinPublicacion;
+	}
+	
+	public String getHashtag() {
+		return this.hashtag;
+	}
+	
+	public boolean getCorregido() {
+		return this.corregido;
+	}
+	
+	public List<Puesto> getPuestos() {
+		return this.puestos;
+	}
+
+	public String getEstado() {
+		if (corregido) {
+			return "corregido";
+		}
+		else return "no corregido";
+	}
+	
+	public List<Inscripcion> getInscripciones() {
+		return inscripciones;
+	}
+
+	public void setInscripciones(List<Inscripcion> inscripciones) {
+		this.inscripciones = inscripciones;
+	}
+	
+	protected void agregarInscripciones(List<Inscripcion> inscriptos) {
+		this.inscripciones = inscriptos;
+	}
+
+	public boolean equals(Concurso c) {
+		return this.codigo.equals(c.getCodigo());
+	}
+	
+	public List<Publicacion> getPublicaciones(){
+		return this.publicaciones;
+	}
+	
+	public void setPublicaciones(List<Publicacion> publicaciones) {
+		this.publicaciones = publicaciones;
+	}
+	
+//	public Inscripcion ultimoInscripto() {
+//		if (this.inscripciones.isEmpty()) {
+//			throw new RuntimeException("No se encuentra ningun inscripto");
+//		}
+//		Inscripcion ultimoInscripto = new Inscripcion();
+//		LocalDate ultimaFecha = this.aperturaInscripcion;
+//		for (Inscripcion inscripcion : inscripciones) {
+//			if (ultimaFecha.isBefore(inscripcion.fechaInscripcion())) {
+//				ultimoInscripto = inscripcion;
+//				ultimaFecha = inscripcion.fechaInscripcion();//falta hora
+//				
+//			}
+//		}
+//		
+//		return ultimoInscripto;
+//	}
+
+//	public Publicacion ultimaPublicacion() {
+//	
+//		
+//		Publicacion ultimaPublicacion = new Publicacion();
+//		LocalDate ultimaFecha = LocalDate.now();
+//		for (Publicacion publicacion : publicaciones) {
+//			if (ultimaFecha.isBefore(publicacion.getFecha())) {
+//				ultimaPublicacion = publicacion;
+//			}
+//		}
+//		
+//		return ultimaPublicacion;
+//	}
+
+	public void eliminarInscripcion(int id_participante) {
+		// TODO Auto-generated method stub
+		if (LocalDate.now().isAfter(this.cierreInscripcion)) {
+			throw new RuntimeException("No puede eliminarse la inscripcion debido el cierre de inscripciones");
+		}else {
+			Inscripcion inscripcionAeliminar = new Inscripcion();
+			boolean encontrada = false;
+			for (Inscripcion inscripcion : inscripciones) {
+				if (inscripcion.esElParticipante(id_participante)) {
+//					inscripciones.remove(inscripcion);
+					inscripcionAeliminar = inscripcion;
+					encontrada = true;
+				}
+			}
+			if (encontrada) {
+				inscripciones.remove(inscripcionAeliminar);
+			}
+			
+		}
+	}
+
+	public void agregarJurado(Jurado jurado) {
+		if (LocalDate.now().isAfter(this.cierrePublicacion)) {
+			this.jurado.add(jurado);
+		}
+	}
+	
+	public List<Jurado> getJurado() {
+		return jurado;
+	}
+
+	public void setJurado(List<Jurado> jurado) {
+		this.jurado = jurado;
+	}
+	
+	public void evaluarPublicaciones() {
+		if (LocalDate.now().isAfter(this.cierrePublicacion)) {
+			for (Publicacion publicacion : publicaciones) {
+				publicacion.evaluar();
+			}
+		}
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
+
+	public void setAperturaInscripcion(LocalDate aperturaInscripcion) {
+		this.aperturaInscripcion = aperturaInscripcion;
+	}
+
+	public void setCierreInscripcion(LocalDate cierreInscripcion) {
+		this.cierreInscripcion = cierreInscripcion;
+	}
+
+	public void setAperturaPublicacion(LocalDate aperturaPublicacion) {
+		this.aperturaPublicacion = aperturaPublicacion;
+	}
+
+	public void setCierrePublicacion(LocalDate cierrePublicacion) {
+		this.cierrePublicacion = cierrePublicacion;
+	}
+
+	public void setHoraAperturaInscripcion(int horaAperturaInscripcion) {
+		this.horaAperturaInscripcion = horaAperturaInscripcion;
+	}
+
+	public void setHoraFinInscripcion(int horaFinInscripcion) {
+		this.horaFinInscripcion = horaFinInscripcion;
+	}
+
+	public void setHoraAperturaPublicacion(int horaAperturaPublicacion) {
+		this.horaAperturaPublicacion = horaAperturaPublicacion;
+	}
+
+	public void setHoraFinPublicacion(int horaFinPublicacion) {
+		this.horaFinPublicacion = horaFinPublicacion;
+	}
+
+	public void setHashtag(String hashtag) {
+		this.hashtag = hashtag;
+	}
+
+	public void setCorregido(boolean corregido) {
+		this.corregido = corregido;
+	}
+
+	public void setPuestos(List<Puesto> puestos) {
+		this.puestos = puestos;
+	}
+
+	public void setUltimoInscripto(Inscripcion ultimoInscripto) {
+		this.ultimoInscripto = ultimoInscripto;
+	}
+
+	public Inscripcion ultimoInscripto() {
+		return this.ultimoInscripto;
+	}
+	
+	public String toString() {
+		return this.codigo + " " + this.nombre;
+	}
+}

@@ -1,5 +1,7 @@
 package ventanas;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
@@ -17,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 
 /**
@@ -39,13 +42,13 @@ public class Jurado_Administrar extends JFrame {
 	private JLabel lblListaJurados;
 	private Api api;
 
-	public Jurado_Administrar(String idioma) {
+	public Jurado_Administrar(Api ap, String idioma) {
 		
 		// Creo el bundle
 		bundle = ResourceBundle.getBundle(idioma);
 		
 		// Creo la api
-		api = new Api();
+		api = ap;
 		
 		setTitle(bundle.getString("jurado.titulo"));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -123,18 +126,64 @@ public class Jurado_Administrar extends JFrame {
 		lblListaJurados = new JLabel(bundle.getString("jurado.lista"));
 		lblListaJurados.setBounds(227, 110, 111, 14);
 		contentPane.add(lblListaJurados);
-		
-		JButton btnNewButton_2 = new JButton(bundle.getString("eliminar"));
-		btnNewButton_2.setBounds(10, 313, 250, 23);
-		contentPane.add(btnNewButton_2);
-		btnNewButton_2.addActionListener(e -> eliminarJurados());
-		
-		JButton btnNewButton_3 = new JButton(bundle.getString("modificar"));
-		btnNewButton_3.setBounds(267, 313, 266, 23);
-		contentPane.add(btnNewButton_3);
-		btnNewButton_3.addActionListener( e -> modificarJurados());
-		
+				
 		this.listarJurados();
+		
+		AbstractAction eliminar = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("jurado.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+				// 0=yes, 1=no, 2=cancel
+				System.out.println(input);
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+						
+						api.eliminarJurado((int) table.getValueAt(modelRow, 0));
+						
+						// Saco el jurado de la tabla
+						model.removeRow(modelRow);
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					listarJurados();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn = new ButtonColumn(table, eliminar, 4);
+		buttonColumn.setMnemonic(KeyEvent.VK_D);
+		
+		AbstractAction modificar = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("jurado.desea_modificar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+				// 0=yes, 1=no, 2=cancel
+				System.out.println(input);
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+						
+						// Modifico el jurado
+						api.modificarJurado((int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), 
+								table.getValueAt(modelRow, 2).toString());
+						JOptionPane.showMessageDialog(null, bundle.getString("jurado.exito.modificar"));
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					listarJurados();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn1 = new ButtonColumn(table, modificar, 3);
+		buttonColumn1.setMnemonic(KeyEvent.VK_D);
 	}
 	
 	/**
@@ -151,8 +200,8 @@ public class Jurado_Administrar extends JFrame {
 					jurado.getId(),
 					jurado.getNombre(),
 					jurado.getApellido(),
-					false,
-					false
+					bundle.getString("modificar"),
+					bundle.getString("eliminar")
 				});
 			}
 		} catch(Exception e) {
@@ -176,17 +225,12 @@ public class Jurado_Administrar extends JFrame {
 
 			protected String doInBackground() {
 				try {			
-					// Si el jurado existe muestro mensaje en pantalla
-					if (api.existeJurado(nombre.getText(), apellido.getText())){
-						return bundle.getString("jurado.repetida");
-					}
-					
 					// Creo el jurado
 					Jurado jurado = api.crearJurado(nombre.getText(), apellido.getText());
 					
 					// Guardo el jurado en la base de datos
-					api.guardarJurado(jurado);
-					
+
+					api.guardarJurado(nombre.getText(), apellido.getText());
 					// Vacio los inputs
 					nombre.setText("");
 					apellido.setText("");
@@ -200,127 +244,5 @@ public class Jurado_Administrar extends JFrame {
 			}
 		};
 		worker.execute();
-	}
-	
-	/**
-	 * Metodo que modifica el jurado seleccionado en la base de datos
-	 */
-	private void modificarJurados() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cantidad de checkeados
-					int checkeados = cantidadCheckSeleccionados(3);
-					
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 3).toString());
-							if (checked) {
-								// Si el jurado no esta repetido lo modifico
-								if (!api.existeJurado(table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString())) {
-									// Creo el jurado
-									Jurado jurado = api.crearJurado( (int) table.getValueAt(i, 0), table.getValueAt(i, 1).toString(), 
-											table.getValueAt(i, 2).toString() );
-									
-									// Modifico el jurado
-									api.modificarJurado(jurado);
-									
-									// Agrego el jurado en la tabla
-									listarJurados();
-									return bundle.getString("jurado.exito.modificar");
-								}
-							}
-						}
-					
-						listarJurados();
-						
-						// Si no se modifico es porque ya se encuentra en la base de datos.
-						return bundle.getString("jurado.repetida");
-					} else {
-						// Si selecciono mas de uno o ninguno muestro mensaje
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						} 
-						return bundle.getString("seleccionar.uno");
-					}
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-
-	/**
-	 * Metodo que elimina el jurado seleccionado 
-	 */
-	private void eliminarJurados() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cantidad de checkeados
-					int checkeados = cantidadCheckSeleccionados(4);
-					
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 4).toString());
-							if (checked) {
-								// Elimino el jurado
-								api.eliminarJurado((int) table.getValueAt(i, 0));
-								
-								// Saco el jurado de la tabla
-								model.removeRow(i);
-							}
-						}
-						
-						return bundle.getString("jurado.exito.eliminar");
-					} else {
-						// Si selecciono mas de uno o ninguno muestro mensaje
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						} 
-						return bundle.getString("seleccionar.uno");
-					}
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-	
-	/**
-	 * Metodo que verifica cuantos check selecciono
-	 */
-	private int cantidadCheckSeleccionados(int columna) {
-		int cantidad = 0;
-		for (int i = 0; i < model.getRowCount(); i++) {
-			Boolean checked = Boolean.valueOf(table.getValueAt(i, columna).toString());
-			if (checked) {
-				cantidad++;
-			}
-		}
-		return cantidad;
 	}
 }

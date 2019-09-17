@@ -28,12 +28,18 @@ public class Concurso {
 	private List<Publicacion> publicaciones = new ArrayList<Publicacion>();
 	private List<Jurado> jurado = new ArrayList<Jurado>();
 	private Inscripcion ultimoInscripto;
+	private Publicacion ultimaPublicacion;
 
 	/* constructores */
 	public Concurso() { }
 	
 	public Concurso(int id) {
 		this.id = id;
+	}
+	
+	public Publicacion ultimaPublicacion() {
+		
+		return this.ultimaPublicacion;
 	}
 	
 	public Concurso(int id, String nombre) { 
@@ -107,6 +113,12 @@ public class Concurso {
 		this.inscripciones = inscripciones;
 	}
 	
+	public Concurso(String codigo) {
+		// TODO Auto-generated constructor stub
+		this.codigo = codigo;
+		this.nombre = "     ";
+	}
+
 	/**
 	 * Metodo que valida que el valor no sea vacio
 	 * 
@@ -288,7 +300,10 @@ public class Concurso {
 		
 		if (this.estaInscripto(participante)) {
 			
-			this.publicaciones.add(publicacion);
+			Publicacion nuevaPublicacion = new Publicacion(participante, this, publicacion.getTexto());
+			
+			this.publicaciones.add(nuevaPublicacion);
+			this.ultimaPublicacion = nuevaPublicacion;
 		}else {
 			throw new RuntimeException("Este participante no se encuentra inscripto en este concurso, no puedo agregar publicaciones a dicho concurso");
 		}
@@ -408,41 +423,8 @@ public class Concurso {
 		this.publicaciones = publicaciones;
 	}
 	
-//	public Inscripcion ultimoInscripto() {
-//		if (this.inscripciones.isEmpty()) {
-//			throw new RuntimeException("No se encuentra ningun inscripto");
-//		}
-//		Inscripcion ultimoInscripto = new Inscripcion();
-//		LocalDate ultimaFecha = this.aperturaInscripcion;
-//		for (Inscripcion inscripcion : inscripciones) {
-//			if (ultimaFecha.isBefore(inscripcion.fechaInscripcion())) {
-//				ultimoInscripto = inscripcion;
-//				ultimaFecha = inscripcion.fechaInscripcion();//falta hora
-//				
-//			}
-//		}
-//		
-//		return ultimoInscripto;
-//	}
-
-	public Publicacion ultimaPublicacion() {
-	
-		if (this.inscripciones.isEmpty()) {
-			throw new RuntimeException("No se encuentra ningun inscripto");
-		}
-		Publicacion ultimaPublicacion = new Publicacion();
-		LocalDate ultimaFecha = LocalDate.now();
-		for (Publicacion publicacion : publicaciones) {
-			if (ultimaFecha.isBefore(publicacion.getFecha())) {
-				ultimaPublicacion = publicacion;
-			}
-		}
-		
-		return ultimaPublicacion;
-	}
-
 	public void eliminarInscripcion(int id_participante) {
-		// TODO Auto-generated method stub
+		
 		if (LocalDate.now().isAfter(this.cierreInscripcion)) {
 			throw new RuntimeException("No puede eliminarse la inscripcion debido el cierre de inscripciones");
 		}else {
@@ -450,7 +432,6 @@ public class Concurso {
 			boolean encontrada = false;
 			for (Inscripcion inscripcion : inscripciones) {
 				if (inscripcion.esElParticipante(id_participante)) {
-//					inscripciones.remove(inscripcion);
 					inscripcionAeliminar = inscripcion;
 					encontrada = true;
 				}
@@ -482,6 +463,7 @@ public class Concurso {
 				publicacion.evaluar();
 			}
 		}
+		this.corregido = true;
 	}
 	
 	public void setId(int id) {
@@ -553,6 +535,6 @@ public class Concurso {
 	}
 	
 	public String toString() {
-		return "Codigo: " + this.codigo + ", Nombre: " + this.nombre;
+		return this.codigo + " " + this.nombre;
 	}
 }

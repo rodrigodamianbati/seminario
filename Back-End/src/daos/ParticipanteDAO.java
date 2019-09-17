@@ -41,6 +41,8 @@ public class ParticipanteDAO implements IParticipante {
 	private String participantesConConcurso = "SELECT DISTINCT p.nombre, p.apellido, p.dni, p.email "
 			+ "FROM participante p JOIN inscripcion i ON (p.id = i.id_participante) ";
 	private String participante = "SELECT * FROM participante p WHERE p.id = ?";
+	
+	private String participanteConInscripciones = "SELECT DISTINCT p.id, p.nombre, p.apellido, p.dni, p.email FROM participante p JOIN inscripcion i ON (p.id = i.id_participante) WHERE p.id = ?";
 
 	/**
 	 * Metodo que inserta un nuevo participanteen la base de datos.
@@ -241,7 +243,6 @@ public class ParticipanteDAO implements IParticipante {
 			try (Connection connect = conexion_db.obtenerConexionBD();
 					PreparedStatement statement = connect.prepareStatement(this.participantesConcursoDadoCodigo)) {
 				statement.setString(1, seleccion);
-				System.out.println(statement);
 				
 				try (ResultSet rs = statement.executeQuery();) {
 					while (rs.next()) {
@@ -266,8 +267,7 @@ public class ParticipanteDAO implements IParticipante {
 		try (Connection connect = conexion_db.obtenerConexionBD();
 				PreparedStatement statement = connect.prepareStatement(this.noParticipantesConcursoDadoNombre)) {
 			statement.setString(1, seleccion);
-			System.out.println(statement);
-			
+				
 			try (ResultSet rs = statement.executeQuery();) {
 				while (rs.next()) {
 					Participante participante = new Participante(rs.getInt("id"), rs.getString("nombre"),
@@ -295,6 +295,29 @@ public class ParticipanteDAO implements IParticipante {
 				while (rs.next()) {
 					p = new Participante(rs.getInt("p.id"),rs.getString("p.nombre"), rs.getString("p.apellido"),
 							rs.getString("p.dni"), rs.getString("p.email"));
+				}
+				return p;
+			} catch (SQLException e) {
+				throw new RuntimeException("Error al cargar la lista de participantes del concurso");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error de conexion");
+		}
+	}
+
+	@Override
+	public Participante participanteConInscripciones(int id_participante) {
+		ConexionDB conexion_db = new ConexionDB();
+		Participante p = new Participante();
+		try (Connection connect = conexion_db.obtenerConexionBD();
+				PreparedStatement statement = connect.prepareStatement(this.participanteConInscripciones)) {
+			statement.setInt(1, id_participante);
+			try (ResultSet rs = statement.executeQuery();) {
+				if (rs.next()) {
+					p = new Participante(rs.getInt("p.id"),rs.getString("p.nombre"), rs.getString("p.apellido"),
+							rs.getString("p.dni"), rs.getString("p.email"));
+				}else{
+					throw new RuntimeException("El participante debe haberse inscripto en algun concurso para ver/realizar publicaciones");
 				}
 				return p;
 			} catch (SQLException e) {

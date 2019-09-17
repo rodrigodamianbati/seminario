@@ -6,11 +6,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Button;
 import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
@@ -38,10 +41,10 @@ public class Categoria_Administrar extends JFrame {
 	private Api api;
 	private ResourceBundle bundle;
 
-	public Categoria_Administrar(String idioma) {	
-		
+	public Categoria_Administrar(Api ap, String idioma) {	
+		this.api = ap;
 		// Se crea la api
-		api = new Api();
+//		api = new Api();
 			
 		// Se crea el bundle
 		bundle = ResourceBundle.getBundle(idioma);
@@ -81,8 +84,11 @@ public class Categoria_Administrar extends JFrame {
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
+		
+		
 		scrollPane.setViewportView(table);
 		table.setCellSelectionEnabled(true);
+		
 		table.setModel(new DefaultTableModel(
 			new Object[][] {},
 			new String[] {
@@ -110,18 +116,67 @@ public class Categoria_Administrar extends JFrame {
 		table.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
 		table.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
 		
-		JButton btnEliminarSeleccionados = new JButton(bundle.getString("eliminar"));
-		btnEliminarSeleccionados.setBounds(10, 324, 300, 23);
-		contentPane.add(btnEliminarSeleccionados);
-		btnEliminarSeleccionados.addActionListener(e -> eliminarCategoria());
-		
-		JButton btnModificarSeleccionados = new JButton(bundle.getString("modificar"));
-		btnModificarSeleccionados.setBounds(330, 324, 300, 23);
-		contentPane.add(btnModificarSeleccionados);
-		btnModificarSeleccionados.addActionListener(e -> modificarCategoria());
-		
 		this.categorias();
+		
+		AbstractAction eliminar = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("categoria.desea_eliminar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+						
+						api.eliminarCategoria((int) table.getValueAt(modelRow, 0));
+						
+						// Se elimina la categoria de la tabla
+						model.removeRow(modelRow);
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					categorias();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn = new ButtonColumn(table, eliminar, 3);
+		buttonColumn.setMnemonic(KeyEvent.VK_D);
+		
+		AbstractAction modificar = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				int input = JOptionPane.showConfirmDialog(null, bundle.getString("categoria.desea_modificar"),
+						bundle.getString("seleccionar"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+				// 0=yes, 1=no, 2=cancel
+			
+				try {
+					if (input == 0) {
+						JTable table = (JTable) e.getSource();
+						int modelRow = Integer.valueOf(e.getActionCommand());
+							//Se modifica la categoria
+							api.modificarCategoria((int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString());
+							
+							// Se agrega la categoria a la tabla
+
+							JOptionPane.showMessageDialog(null, bundle.getString("categoria.exito.modificar"));
+						
+					}
+				} catch (Exception a) {
+					JOptionPane.showMessageDialog(null, a.getMessage());
+				}finally {
+					categorias();
+				}
+			}
+		};
+		
+		ButtonColumn buttonColumn1 = new ButtonColumn(table, modificar, 2);
+
+		buttonColumn1.setMnemonic(KeyEvent.VK_D);
+	
 	}
+		
 	
 	/**
 	 * Metodo que muestra todas las categorias en la tabla
@@ -136,8 +191,8 @@ public class Categoria_Administrar extends JFrame {
 				model.addRow(new Object[]{
 					categoria.getId(),
 					categoria.getNombre(),
-					false,
-					false
+					bundle.getString("modificar"),
+					bundle.getString("eliminar")
 				});
 			}
 		} catch(Exception e) {
@@ -161,16 +216,11 @@ public class Categoria_Administrar extends JFrame {
 
 			protected String doInBackground() {
 				try {
-					// Si la categoria ya existe no se permite crearla y envia un mensaje al usuario
-					if (api.existeCategoria(nombreCategoria.getText())){
-						return bundle.getString("categoria.repetida");
-					}
-					
 					// Se crea la categoria
 					Categoria categoria = api.crearCategoria(nombreCategoria.getText());
 				
 					// Se guarda la categoria
-					api.nuevaCategoria(categoria);
+
 					
 					// Se vacian los inputs
 					nombreCategoria.setText("");
@@ -186,124 +236,5 @@ public class Categoria_Administrar extends JFrame {
 			}
 		};
 		worker.execute();
-	}
-	
-	/**
-	 * Metodo que modifica la categoria seleccionada
-	 */
-	private void modificarCategoria() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cuantas categorias fueron seleccionadas
-					int checkeados = cantidadCategoriasSeleccionadas(2);
-					
-					// Si se selecciono un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 2).toString());
-							if (checked) {
-								// Si la categoria no esta repetida se modifica si no se su cancela su modificacion y envia el mensaje correspondiente
-								if (!api.existeCategoria(table.getValueAt(i, 1).toString())) {
-									// Se crea la categoria
-									Categoria categoria = api.crearCategoria( (int) table.getValueAt(i, 0), table.getValueAt(i, 1).toString());
-									
-									//S modifica la categoria
-									api.modificarCategoria(categoria);
-									
-									// Se agrega la categoria a la tabla
-									categorias();
-									return bundle.getString("categoria.exito.modificar");
-								}
-							}
-						}
-				
-						categorias();
-						return bundle.getString("categoria.repetida");
-					} else {
-						// Si se selecciona mas de uno o ninguno se muestra el mensaje correspondiente en pantalla
-						if (checkeados > 1) {
-							//se selecciono mas de una categoria
-							return bundle.getString("seleccionar.mucho");
-						} 
-						return bundle.getString("seleccionar.uno");
-					}
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-	
-	/**
-	 * Metodo que elimina la categoria seleccionada en la base de datos
-	 */
-	private void eliminarCategoria() {
-		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-			protected void done() {
-				try {
-					String mensajeError = get();
-					JOptionPane.showMessageDialog(null, mensajeError);
-				} catch (InterruptedException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			protected String doInBackground() {
-				try {
-					// Variable entera que indica cuantos se seleccionaron
-					int checkeados = cantidadCategoriasSeleccionadas(3);
-					
-					// Si se selecciona un solo elemento se realiza la operacion
-					if (checkeados == 1) {
-						for (int i = 0; i < model.getRowCount(); i++) {
-							Boolean checked = Boolean.valueOf(table.getValueAt(i, 3).toString());
-							if (checked) {
-								// Se elimina la categoria
-								api.eliminarCategoria((int) table.getValueAt(i, 0));
-								
-								// Se elimina la categoria de la tabla
-								model.removeRow(i);
-							}
-						}
-		
-						return bundle.getString("categoria.exito.eliminar");
-					} else {
-						// Si selecciono mas de uno o ninguno muestro mensaje
-						if (checkeados > 1) {
-							return bundle.getString("seleccionar.mucho");
-						} 
-						return bundle.getString("seleccionar.uno");
-					}		
-				} catch (RuntimeException e) {
-					return e.getMessage();
-				}
-			}
-		};
-		worker.execute();
-	}
-	
-	/**
-	 * Metodo que verifica cuantas categorias se seleccionaron
-	 */
-	private int cantidadCategoriasSeleccionadas(int columna) {
-		int cantidad = 0;
-		for (int i = 0; i < model.getRowCount(); i++) {
-			Boolean checked = Boolean.valueOf(table.getValueAt(i, columna).toString());
-			if (checked) {
-				cantidad++;
-			}
-		}
-		return cantidad;
 	}
 }

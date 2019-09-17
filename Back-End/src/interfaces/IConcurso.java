@@ -37,5 +37,7 @@ public interface IConcurso {
 
 	void nuevaInscripcion(Inscripcion inscripcion);
 
+	List<Concurso> listaConcursoPublicacionAbiertaYcerradasInscripto(int id_participante);
+
 	
 }
