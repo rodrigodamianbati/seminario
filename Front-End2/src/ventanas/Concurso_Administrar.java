@@ -274,6 +274,7 @@ public class Concurso_Administrar extends JFrame {
 						
 						// Saco el concurso de la tabla
 						model.removeRow(modelRow);
+						JOptionPane.showMessageDialog(null, bundle.getString("concurso.exito.eliminar"));
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
@@ -334,6 +335,7 @@ public class Concurso_Administrar extends JFrame {
 								Integer.parseInt(table.getValueAt(modelRow, 11).toString()),
 								Integer.parseInt(table.getValueAt(modelRow, 13).toString()), 
 								Boolean.valueOf(table.getValueAt(modelRow, 14).toString()));
+								JOptionPane.showMessageDialog(null, bundle.getString("concurso.exito.modificar"));
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());

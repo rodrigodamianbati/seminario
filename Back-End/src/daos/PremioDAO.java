@@ -102,15 +102,11 @@ public class PremioDAO implements IPremio {
 	public void modificar(Premio premio) {
 		ConexionDB conexion_db = new ConexionDB();
 		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.modificar)) {
-			try {
-				statement.setString(1, premio.getNombre());
-			} catch (SQLException ex) {
-				throw new RuntimeException("Ya existe un premio con este nombre");
-			}
+			statement.setString(1, premio.getNombre());
 			statement.setInt(2, premio.getId());
 			statement.executeUpdate();
 		} catch (SQLException ex) {
-			throw new RuntimeException("Error al modificar premio.");
+			throw new RuntimeException("Ya existe un premio con este nombre.");
 		}
 	}
 

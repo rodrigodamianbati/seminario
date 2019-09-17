@@ -185,6 +185,7 @@ public class Jurado_Administrar extends JFrame {
 						// Modifico el jurado
 						api.modificarJurado((int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString(), 
 								table.getValueAt(modelRow, 2).toString());
+						JOptionPane.showMessageDialog(null, bundle.getString("jurado.exito.modificar"));
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());

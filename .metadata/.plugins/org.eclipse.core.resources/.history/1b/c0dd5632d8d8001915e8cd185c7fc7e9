@@ -1,0 +1,150 @@
+package daos;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import interfaces.IJurado;
+import modelos.Jurado;
+
+public class JuradoDAO implements IJurado {
+	
+	private String insertar = "INSERT INTO jurado(nombre, apellido) VALUES(?, ?)";
+	private String verificar = "SELECT nombre, apellido FROM jurado WHERE nombre = ? AND apellido= ?";
+	private String listar = "SELECT * FROM jurado";
+	private String modificar = "UPDATE jurado SET nombre = ?, apellido = ? WHERE id = ?";
+	private String eliminar = "DELETE FROM jurado WHERE id = ?";
+	private String jurado = "SELECT * FROM jurado WHERE j.id = ?";
+
+	/**
+	 * Metodo que inserta un nuevo jurado en la base de datos.
+	 * 
+	 * @param jurado
+	 *            parametro del tipo jurado
+	 */
+	@Override
+	public void insertar(Jurado jurado) {
+		ConexionDB conexion_db = new ConexionDB();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.insertar)) {
+			statement.setString(1, jurado.getNombre());
+			statement.setString(2, jurado.getApellido());
+			statement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RuntimeException("Error al guardar jurado.");
+		}
+	}
+
+	/**
+	 * Metodo que devuelve todos los jurados.
+	 * 
+	 * @return lista de objetos Jurado
+	 */
+	public List<Jurado> devolverJurados() {
+		ConexionDB conexion_db = new ConexionDB();
+		List<Jurado> lista = new ArrayList<>();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.listar)) {
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					lista.add(new Jurado(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellido")));
+				}
+				return lista;
+			} catch (SQLException e) {
+				throw new RuntimeException("Error al cargar la lista de jurados.");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error al cargar la lista de jurados.");
+		}
+	}
+
+	/**
+	 * Metodo que verifica si existe un jurado en la base de datos por su nombre y apellido.
+	 * 
+	 * @param nombre
+	 *            nombre del jurado a verificar
+	 *            
+	 * @param apellido
+	 * 			  apellido del jurado a verificar
+	 */
+	@Override
+	public boolean verificarExistente(String nombre, String apellido) {
+		ConexionDB conexion_db = new ConexionDB();
+		List<Jurado> lista = new ArrayList<Jurado>();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.verificar)) {
+			statement.setString(1, nombre);
+			statement.setString(2, apellido);
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					lista.add(new Jurado(rs.getString("nombre"), rs.getString("apellido")));
+				}
+				if (lista.size() == 0){
+					return false;
+				}
+				return true;
+			} catch (SQLException e) {
+				throw new RuntimeException("Error en sentencia buscar jurado existente");
+			}
+		} catch (SQLException ex) {
+			throw new RuntimeException("Error en sentencia buscar jurado existente");
+		}
+	}
+
+	/**
+	 * Metodo que modifica un jurado en la base de datos.
+	 * 
+	 * @param jurado
+	 *          variable de tipo jurado
+	 *            
+	 */
+	public void modificar(Jurado jurado) {
+		ConexionDB conexion_db = new ConexionDB();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.modificar)) {
+			statement.setString(1, jurado.getNombre());
+			statement.setString(2, jurado.getApellido());
+			statement.setInt(3, jurado.getId());
+			statement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RuntimeException("Error al modificar jurado.");
+		}
+	}
+	
+
+	/**
+	 * Metodo que elimina un jurado en la base de datos.
+	 * 
+	 * @param id
+	 *            variable de tipo int       
+	 */
+	public void eliminar(int id) {
+		ConexionDB conexion_db = new ConexionDB();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.eliminar)) {
+			statement.setInt(1, id);
+			statement.executeUpdate();
+		} catch (SQLException ex) {
+			throw new RuntimeException("No se puede eliminar el jurado ya que esta asignado a un concurso.");
+		}
+	}
+
+	@Override
+	public Jurado jurado(int id_jurado) {
+		ConexionDB conexion_db = new ConexionDB();
+		Jurado jurado = new Jurado();
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.jurado )) {
+			statement.setInt(1, id_jurado);
+			System.out.println(statement);
+			try (ResultSet rs = statement.executeQuery();) {
+				while (rs.next()) {
+					jurado = new Jurado(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellido"));
+				}
+				return jurado;
+			} catch (SQLException e) {
+				throw new RuntimeException("El jurado dado no existe");
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Error en la conexion");
+		}
+	}
+
+}

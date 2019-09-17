@@ -143,6 +143,7 @@ public class Premio_Administrar extends JFrame {
 						Premio premio = api.modificarPremio( (int) table.getValueAt(modelRow, 0), table.getValueAt(modelRow, 1).toString() );
 						// Modifico el premio
 //						api.modificarPremio(premio);
+						JOptionPane.showMessageDialog(null, bundle.getString("premio.exito.modificar"));
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());
@@ -171,6 +172,7 @@ public class Premio_Administrar extends JFrame {
 						
 						// Saco el premio de la tabla
 						model.removeRow(modelRow);
+						JOptionPane.showMessageDialog(null, bundle.getString("premio.exito.eliminar"));
 					}
 				} catch (Exception a) {
 					JOptionPane.showMessageDialog(null, a.getMessage());

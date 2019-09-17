@@ -28,9 +28,9 @@ public class ParticipanteDAO implements IParticipante {
 	private String participantesConcurso = "SELECT p.nombre, p.apellido, p.dni, p.email "
 			+ "FROM participante p JOIN inscripcion i ON (p.id = i.id_participante) " + "WHERE i.id_concurso = (?)";
 	
-	private String participantesConcursoDadoNombre = "SELECT p.id, p.nombre, p.apellido, p.dni, p.email "
+	private String participantesConcursoDadoCodigo = "SELECT p.id, p.nombre, p.apellido, p.dni, p.email "
 			+ "FROM participante p JOIN inscripcion i ON (p.id = i.id_participante) "
-			+ "WHERE i.id_concurso = (SELECT id FROM concurso c WHERE c.nombre = ?)";
+			+ "WHERE i.id_concurso = (SELECT id FROM concurso c WHERE c.codigo = ?)";
 	
 	private String noParticipantesConcursoDadoNombre = "SELECT DISTINCT p.id, p.nombre, p.apellido, p.dni, p.email " + 
 			"FROM participante p  WHERE p.id NOT IN" + 
@@ -54,19 +54,17 @@ public class ParticipanteDAO implements IParticipante {
 				PreparedStatement statement = connect.prepareStatement(this.insertar)) {
 			statement.setString(1, participante.getNombre());
 			statement.setString(2, participante.getApellido());
-			try {
-				statement.setString(3, participante.getDni());
-			} catch (SQLException ex) {
-				throw new RuntimeException("Un participante con este dni ya existe");
-			}
-			try {
-				statement.setString(4, participante.getEmail());
-			} catch (SQLException ex) {
-				throw new RuntimeException("Un participante con este email ya existe");
-			}
+			statement.setString(3, participante.getDni());
+			statement.setString(4, participante.getEmail());
 			statement.executeUpdate();
 		} catch (SQLException ex) {
-			throw new RuntimeException("Error al guardar participante");
+			if (ex.getMessage().contains("dni")) {
+				throw new RuntimeException("Ya existe un participante con este dni");
+			}else
+				if (ex.getMessage().contains("email")) {
+					throw new RuntimeException("Ya existe un participante con este email");
+				}
+			
 		}
 	}
 
@@ -241,7 +239,7 @@ public class ParticipanteDAO implements IParticipante {
 			}
 		} else {
 			try (Connection connect = conexion_db.obtenerConexionBD();
-					PreparedStatement statement = connect.prepareStatement(this.participantesConcursoDadoNombre)) {
+					PreparedStatement statement = connect.prepareStatement(this.participantesConcursoDadoCodigo)) {
 				statement.setString(1, seleccion);
 				System.out.println(statement);
 				
@@ -295,7 +293,7 @@ public class ParticipanteDAO implements IParticipante {
 			statement.setInt(1, id_participante);
 			try (ResultSet rs = statement.executeQuery();) {
 				while (rs.next()) {
-					p = new Participante(rs.getString("p.nombre"), rs.getString("p.apellido"),
+					p = new Participante(rs.getInt("p.id"),rs.getString("p.nombre"), rs.getString("p.apellido"),
 							rs.getString("p.dni"), rs.getString("p.email"));
 				}
 				return p;

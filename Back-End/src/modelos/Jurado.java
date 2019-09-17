@@ -65,5 +65,15 @@ public class Jurado {
 		int randomInt = ThreadLocalRandom.current().nextInt(1, 10);
 		publicacion.puntuar(randomInt);
 	}
+
+	public void setNombre(String nombre2) {
+		// TODO Auto-generated method stub
+		this.nombre = nombre2;
+	}
+
+	public void setApellido(String apellido2) {
+		// TODO Auto-generated method stub
+		this.apellido = apellido2;
+	}
 	
 }

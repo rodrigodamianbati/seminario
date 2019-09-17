@@ -17,7 +17,7 @@ public class JuradoDAO implements IJurado {
 	private String listar = "SELECT * FROM jurado";
 	private String modificar = "UPDATE jurado SET nombre = ?, apellido = ? WHERE id = ?";
 	private String eliminar = "DELETE FROM jurado WHERE id = ?";
-	private String jurado = "SELECT j.id FROM jurado j WHERE j.id = ?";
+	private String jurado = "SELECT * FROM jurado WHERE id = ?";
 
 	/**
 	 * Metodo que inserta un nuevo jurado en la base de datos.
@@ -133,6 +133,7 @@ public class JuradoDAO implements IJurado {
 		Jurado jurado = new Jurado();
 		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.jurado )) {
 			statement.setInt(1, id_jurado);
+			System.out.println(statement);
 			try (ResultSet rs = statement.executeQuery();) {
 				while (rs.next()) {
 					jurado = new Jurado(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellido"));

@@ -90,9 +90,15 @@ public class ConcursoDAO implements IConcurso {
 			statement.setInt(10, concurso.getHoraInicioPublicacion());
 			statement.setDate(11, Date.valueOf(concurso.getFechaFinPublicacion()));
 			statement.setInt(12, concurso.getHoraFinPublicacion());
-			statement.setBoolean(13, concurso.getCorregido());
+			statement.setBoolean(13, false);
 			statement.executeUpdate();
 		} catch (SQLException ex) {
+			if (ex.getMessage().contains("codigo")) {
+				throw new RuntimeException("Un concurso con este codigo ya existe");
+			}else
+				if (ex.getMessage().contains("hashtag")) {
+					throw new RuntimeException("Un concurso con este hashtag ya existe");
+				}
 			throw new RuntimeException("Error al guardar concurso");
 		}
 	}
@@ -195,7 +201,13 @@ public class ConcursoDAO implements IConcurso {
 			statement.setInt(13, concurso.getId());
 			statement.executeUpdate();
 		} catch (SQLException ex) {
-			throw new RuntimeException("Error al cargar el concurso");
+			if (ex.getMessage().contains("id")) {
+				throw new RuntimeException("El concurso dado no existe, no puede modificarse");
+			}else
+				if (ex.getMessage().contains("codigo")) {
+					throw new RuntimeException("Un concurso con el codigo dado ya existe");
+				}else
+					throw new RuntimeException("Error al cargar el concurso");
 		}
 	}
 
@@ -211,7 +223,16 @@ public class ConcursoDAO implements IConcurso {
 			statement.setInt(1, id);
 			statement.executeUpdate();
 		} catch (SQLException ex) {
-			throw new RuntimeException("No se puede eliminar el concurso porque tiene participant/s y/o premio/s");
+			if (ex.getMessage().contains("id")) {
+				throw new RuntimeException("El concurso dado no existe, no puede eliminarse");
+			}else
+				if (ex.getMessage().contains("participante")) {
+					throw new RuntimeException("No se puede eliminar el concurso porque posee participantes asignados");
+				}else
+					if (ex.getMessage().contains("premio")) {
+						throw new RuntimeException("No se puede eliminar el concurso porque posee premio/s asignados");
+					}else
+						throw new RuntimeException("Error en la eliminacion del concurso");
 		}
 	}
 

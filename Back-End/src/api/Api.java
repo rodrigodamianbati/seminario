@@ -50,9 +50,11 @@ public class Api {
 	 */
 	public Categoria crearCategoria(String nombre) {
 		Categoria categoria = new Categoria(nombre);
+		ICategoria categoriaDAO = new CategoriaDAO();
+		categoriaDAO.insertar(categoria);
 		return categoria;
 	}
-	
+//	
 	/**
 	 * Metodo para la creacion de una categoria con nombre e id.
 	 * 
@@ -450,6 +452,8 @@ public class Api {
 	public void modificarJurado(int id_jurado, String nombre, String apellido) {
 		IJurado juradoDAO = new JuradoDAO();
 		Jurado jurado = juradoDAO.jurado(id_jurado);
+		jurado.setNombre(nombre);
+		jurado.setApellido(apellido);
 		juradoDAO.modificar(jurado);
 	}
 	
@@ -613,6 +617,8 @@ public class Api {
 		Concurso concurso = new Concurso(codigo, nombre, hashtag, categoria, fechaInicioInscripcion, fechaCierreInscripcion,
 				fechaInicioPublicacion, fechaCierrePublicacion, horaInicioInscripcion, horaFinInscripcion, horaInicioPublicacion,
 				horaFinPublicacion);
+			IConcurso concurso_dao = new ConcursoDAO();
+			concurso_dao.insertar(concurso);
 		return concurso;
 	}
 	
@@ -1169,27 +1175,16 @@ public class Api {
 			int horaInicioPublicacion, int horaFinPublicacion, Boolean estado) {
 		// TODO Auto-generated method stub
 		IConcurso concursoDAO = new ConcursoDAO();
-		Concurso concurso = concursoDAO.concursoDadoId(id);
-		
 		ICategoria categoriaDAO = new CategoriaDAO();
 		Categoria categoria = categoriaDAO.categoria(nombreCategoria);
+		Concurso concurso = new Concurso( id,  codigo,  nombre,  hashtag,  categoria,
+				 fechaInicioInscripcion,  fechaCierreInscripcion,  fechaInicioPublicacion,  fechaCierrePublicacion,  horaInicioInscripcion,  horaFinInscripcion,
+				 horaInicioPublicacion,  horaFinPublicacion, estado);
 		
-		concurso.setCodigo(codigo);
-		concurso.setNombre(nombre);
-		concurso.setHashtag(hashtag);
-		concurso.setCategoria(categoria);
-		concurso.setAperturaInscripcion(fechaInicioInscripcion);
-		concurso.setCierreInscripcion(fechaCierreInscripcion);
-		concurso.setAperturaPublicacion(fechaInicioPublicacion);
-		concurso.setCierrePublicacion(fechaCierrePublicacion);
-		concurso.setHoraAperturaInscripcion(horaInicioInscripcion);
-		concurso.setHoraFinInscripcion(horaFinInscripcion);
-		concurso.setHoraAperturaPublicacion(horaInicioPublicacion);
-		concurso.setHoraFinPublicacion(horaFinPublicacion);
-//		concurso.setCorregido(estado);
 		concursoDAO.modificar(concurso);
-		
 	}
+	
+	
 
 	public Concurso concurso(String codigo) {
 		// TODO Auto-generated method stub

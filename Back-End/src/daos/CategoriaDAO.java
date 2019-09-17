@@ -127,7 +127,7 @@ public class CategoriaDAO implements ICategoria {
 			statement.setInt(2, categoria.getId());
 			statement.executeUpdate();
 		} catch (SQLException ex) {
-			throw new RuntimeException("Error al modificar categoria.");
+			throw new RuntimeException("ya existe una categoria con este nombre");
 		}
 	}
 	

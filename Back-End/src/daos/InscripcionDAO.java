@@ -15,7 +15,7 @@ public class InscripcionDAO implements IInscripcion {
 	
 	private String insertar = "INSERT INTO inscripcion(id_participante, id_concurso, fecha_inscripcion, hora_inscripcion) VALUES(?, ?, ?, ?)";
 	private String eliminar = "DELETE FROM inscripcion WHERE id_participante = ? AND id_concurso = ?";
-	private String eliminarDadoNombre = "DELETE FROM inscripcion WHERE id_participante = ? AND id_concurso IN (SELECT c.id FROM concurso c WHERE c.nombre = ?)";
+	private String eliminarDadoCodigo = "DELETE FROM inscripcion WHERE id_participante = ? AND id_concurso IN (SELECT c.id FROM concurso c WHERE c.codigo = ?)";
 	private String verificar = "SELECT id FROM inscripcion WHERE id_participante = ? AND id_concurso = ?";
 
 	/**
@@ -88,7 +88,7 @@ public class InscripcionDAO implements IInscripcion {
 	public void eliminar(int id_participante, String concurso) {
 		// TODO Auto-generated method stub
 		ConexionDB conexion_db = new ConexionDB();
-		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.eliminarDadoNombre)) {
+		try (Connection connect = conexion_db.obtenerConexionBD(); PreparedStatement statement = connect.prepareStatement(this.eliminarDadoCodigo)) {
 			statement.setInt(1, id_participante);
 			statement.setString(2, concurso);
 			statement.executeUpdate();

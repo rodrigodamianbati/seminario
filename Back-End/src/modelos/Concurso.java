@@ -446,11 +446,19 @@ public class Concurso {
 		if (LocalDate.now().isAfter(this.cierreInscripcion)) {
 			throw new RuntimeException("No puede eliminarse la inscripcion debido el cierre de inscripciones");
 		}else {
+			Inscripcion inscripcionAeliminar = new Inscripcion();
+			boolean encontrada = false;
 			for (Inscripcion inscripcion : inscripciones) {
 				if (inscripcion.esElParticipante(id_participante)) {
-					inscripciones.remove(inscripcion);
+//					inscripciones.remove(inscripcion);
+					inscripcionAeliminar = inscripcion;
+					encontrada = true;
 				}
 			}
+			if (encontrada) {
+				inscripciones.remove(inscripcionAeliminar);
+			}
+			
 		}
 	}
 
@@ -545,6 +553,6 @@ public class Concurso {
 	}
 	
 	public String toString() {
-		return this.codigo;
+		return "Codigo: " + this.codigo + ", Nombre: " + this.nombre;
 	}
 }

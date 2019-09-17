@@ -1,0 +1,1220 @@
+package api;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import daos.CategoriaDAO;
+import daos.ConcursoDAO;
+import daos.InscripcionDAO;
+import daos.JuradoDAO;
+import daos.ParticipanteDAO;
+import daos.PremioDAO;
+import daos.PublicacionDAO;
+import daos.PuestoDAO;
+import daos.TwitterDAO;
+import excepciones.ParticipanteExcepcion;
+import interfaces.ICategoria;
+import interfaces.IConcurso;
+import interfaces.IInscripcion;
+import interfaces.IJurado;
+import interfaces.IParticipante;
+import interfaces.IPremio;
+import interfaces.IPublicacion;
+import interfaces.IPuesto;
+import interfaces.ITwitter;
+import modelos.Categoria;
+import modelos.Concurso;
+import modelos.Inscripcion;
+import modelos.Jurado;
+import modelos.Participante;
+import modelos.Premio;
+import modelos.Publicacion;
+import modelos.Puesto;
+
+
+public class Api {
+	
+	// ================================================================
+	// CATEGORIA
+	// ================================================================
+
+	/**
+	 * Metodo para la creacion de una categoria con nombre.
+	 * 
+	 * @param nombre
+	 *            Parametro para el nombre
+	 *            
+	 * @return Categoria
+	 * 
+	 */
+	public Categoria crearCategoria(String nombre) {
+		Categoria categoria = new Categoria(nombre);
+		ICategoria categoriaDAO = new CategoriaDAO();
+		categoriaDAO.insertar(categoria);
+		return categoria;
+	}
+//	
+	/**
+	 * Metodo para la creacion de una categoria con nombre e id.
+	 * 
+	 * @param nombre
+	 *            Parametro para el nombre
+	 *            
+	 *  @param id
+	 *            Parametro para el id
+	 *            
+	 * @return Categoria
+	 * 
+	 */
+	public Categoria crearCategoria(int id, String nombre) {
+		Categoria categoria = new Categoria(id, nombre);
+		ICategoria categoria_dao = new CategoriaDAO();
+		categoria_dao.insertar(categoria);
+		return categoria;
+	}
+	
+//	/**
+//	 * Metodo para la persistencia de una categoria en la base de datos.
+//	 * 
+//	 * @param categoria
+//	 *            Parametro del tipo Categoria
+//	 *            
+//	 */
+//	public void nuevaCategoria(Categoria categoria) {
+//		ICategoria categoria_dao = new CategoriaDAO();
+//		categoria_dao.insertar(categoria);
+//	}
+	
+	/**
+	 * Metodo que devuelve verdadero si existe una categoria con ese nombre en la base de datos
+	 * 
+	 * @param nombre
+	 * 			parametro de tipo String
+	 * 
+	 * @return booleano
+	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+	 */
+	public boolean existeCategoria(String nombre) {
+		ICategoria categoria_dao = new CategoriaDAO();
+		if (categoria_dao.verificarExistente(nombre)) {
+			throw new RuntimeException("Esta categoria ya existe");
+			
+		}
+		return false;
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todas las categorias
+	 * 
+	 * @return
+	 * 				Lista de objeto categoria
+	 */
+	public List<Categoria> listarCategorias() {
+		ICategoria categoria_dao = new CategoriaDAO();
+		return categoria_dao.categorias();
+	}
+	
+	/**
+	 * Metodo que devuelve una categoria
+	 * 
+	 * @param nombre 
+	 * 				Variable de tipo String
+	 * @return 
+	 * 		Una categoria
+	 */
+	public Categoria categoria(String nombre) {
+		ICategoria categoria_dao = new CategoriaDAO();
+		return categoria_dao.categoria(nombre);
+	}
+	
+	/**
+	 * Metodo que elimina una categoria
+	 * 
+	 * @param id
+	 * 			Variable de tipo int
+	 */
+	public void eliminarCategoria(int id) {
+		ICategoria categoria_dao = new CategoriaDAO();
+		categoria_dao.eliminar(id);
+	}
+	
+//	/**
+//	 * Metodo que modifica una categoria
+//	 * 
+//	 * @param categoria
+//	 * 			Variable de tipo Categoria
+//	 */
+//	public void modificarCategoria(Categoria categoria) {
+//		ICategoria categoria_dao = new CategoriaDAO();
+//		categoria_dao.modificar(categoria);
+//	}
+	
+	public void modificarCategoria(int id, String nombre) {
+		// TODO Auto-generated method stub
+		ICategoria categoria_dao = new CategoriaDAO();
+		Categoria categoria = new Categoria(id,nombre);
+		categoria_dao.modificar(categoria);
+	}
+	
+	// ================================================================
+	// PARTICIPANTE
+	// ================================================================
+	
+	/**
+	 * Metodo para la creacion de un participante con nombre, apellido, dni y email.
+	 * 
+	 * @param nombre
+	 *            Parametro para el nombre
+	 *          
+	 * @param apellido
+	 *            Parametro para el apellido
+	 *            
+	 * @param dni
+	 *            Parametro para el dni
+	 *            
+	 * @param email
+	 *            Parametro para el email
+	 *            
+	 * @return Participante
+	 * 
+	 */
+	public Participante crearParticipante(String nombre, String apellido, String dni, String email) {
+		Participante participante = new Participante(nombre, apellido, dni, email);
+		return participante;
+	}
+	
+	public Participante nuevoParticipante(String nombre, String apellido, String dni, String email) {
+		IParticipante participanteDAO = new ParticipanteDAO();
+		
+		Participante participante = new Participante(nombre, apellido, dni, email);
+		participanteDAO.insertar(participante);
+		return participante;
+	}
+	
+
+	
+	public void modificarParticipante(int id, String nombre, String apellido, String dni, String email) {
+		// TODO Auto-generated method stub
+		IParticipante participanteDAO = new ParticipanteDAO();
+		Participante participante = new Participante(id, nombre, apellido, dni, email);
+		
+		participanteDAO.modificar(participante);
+		
+	}
+	
+	/**
+	 * Metodo para la creacion de un participante con nombre, apellido, email, dni e id.
+	 * 
+	 *  @param nombre
+	 *            Parametro para el nombre
+	 *          
+	 * @param apellido
+	 *            Parametro para el apellido
+	 *            
+	 * @param dni
+	 *            Parametro para el dni
+	 *            
+	 * @param email
+	 *            Parametro para el email
+	 *            
+	 *  @param id
+	 *            Parametro para el id
+	 *            
+	 * @return Categoria
+	 * 
+	 */
+	public Participante crearParticipante(int id, String nombre, String apellido, String dni, String email) {
+		Participante participante = new Participante(id, nombre, apellido, dni, email);
+		return participante;
+	}
+	
+	/**
+	 * Metodo para la creacion de un participante solo con id.
+	 * 
+	 *  @param id
+	 *            parametro de tipo int
+	 *  @return Participante
+	 *  			devuelve un participante
+	 */
+	public Participante crearParticipante(int id) {
+		Participante participante = new Participante(id);
+		return participante;
+	}
+	
+	/**
+	 * Metodo que devuelve verdadero si existe un participante con ese dni o email en la base de datos
+	 * 
+	 * @param dni
+	 * 			variable de tipo String
+	 * 
+	 * @return booleano
+	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+	 */
+	public boolean existeParticipante(String dni) {
+		IParticipante participante_DAO = new ParticipanteDAO();
+		if (participante_DAO.verificarExistente(dni)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Metodo para la persistencia de un participante en la base de datos.
+	 * 
+	 * @param participante
+	 *            Parametro del tipo Participante
+	 *            
+	 */
+	public void nuevoParticipante(Participante participante) {
+		IParticipante participante_dao = new ParticipanteDAO();
+		participante_dao.insertar(participante);
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los participantes
+	 * 
+	 * @return
+	 * 				Lista de objeto Participante
+	 */
+	public List<Participante> listarParticipantes() {
+		IParticipante participante_dao = new ParticipanteDAO();
+		return participante_dao.devolverParticipantes();
+	}
+	
+	public List<Participante> listarParticipantesPorSeleccion(String seleccion) {
+		IParticipante participante_dao = new ParticipanteDAO();
+		return participante_dao.participantesPorSeleccion(seleccion);
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los participantes con publicaciones para ese concurso
+	 * @param id_concurso
+	 * 				Variable de tipo int
+	 * @return
+	 * 				Lista de objeto Participante
+	 */
+	public List<Participante> listarParticipantesConcursoConPublicacion(int id_concurso) {
+		IParticipante participante_dao = new ParticipanteDAO();
+		return participante_dao.devolverParticipantesConcursoConPublicacion(id_concurso);
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los participantes para ese concurso
+	 * @param id_concurso
+	 * 				Variable de tipo int
+	 * @return
+	 * 				Lista de objeto Participante
+	 */
+	public List<Participante> listarParticipantesConcurso(int id_concurso) {
+		IParticipante participante_dao = new ParticipanteDAO();
+		return participante_dao.devolverParticipantesConcurso(id_concurso);
+	}
+	
+	/**
+	 * Metodo que elimina un participante
+	 * 
+	 * @param id
+	 * 			Variable de tipo int
+	 */
+	public void eliminarParticipante(int id) {
+		IParticipante participante_dao = new ParticipanteDAO();
+		participante_dao.eliminar(id);
+	}
+	
+	/**
+	 * Metodo que modifica un participante
+	 * 
+	 * @param participante
+	 * 			variable de tipo Participante
+	 */
+	public void modificarParticipante(Participante participante) {
+		IParticipante participante_dao = new ParticipanteDAO();
+	
+			participante_dao.modificar(participante);
+		
+		
+	}
+	
+	// ================================================================
+	// JURADO
+	// ================================================================
+		
+	/**
+	 * Metodo para la creacion de un jurado con nombre y apellido.
+	 * 
+	 * @param nombre
+	 *            Parametro para el nombre
+	 *          
+	 * @param apellido
+	 *            Parametro para el apellido   
+	 *                  
+	 * @return Jurado
+	 * 
+	*/
+	public Jurado crearJurado(String nombre, String apellido) {
+		Jurado jurado = new Jurado(nombre, apellido);
+		return jurado;
+	}
+	
+	/**
+	 * Metodo para la creacion de un jurado con nombre, apellido e id.
+	 * 
+	 * @param nombre
+	 *            Parametro para el nombre
+	 *          
+	 * @param apellido
+	 *            Parametro para el apellido   
+	 *            
+	 * @param id
+	 *            Parametro para el id 
+	 *                  
+	 * @return 
+	 * 			Un jurado
+	 * 
+	*/
+	public Jurado crearJurado(int id, String nombre, String apellido) {
+		Jurado jurado = new Jurado(id, nombre, apellido);
+		return jurado;
+	}
+	
+	
+	
+	/**
+	 * Metodo que devuelve verdadero si existe un jurado con ese nombre y apellido en la base de datos
+	 * 
+	 * @param nombre
+	 * 			variable de tipo String
+	 *  @param apellido
+	 * 			variable de tipo String
+	 * @return booleano
+	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+	 */
+	public boolean existeJurado(String nombre, String apellido) {
+		IJurado jurado_dao = new JuradoDAO();
+		if (jurado_dao.verificarExistente(nombre, apellido)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void guardarJurado(String nombre, String apellido) {
+		Jurado jurado = new Jurado(nombre, apellido);
+		IJurado jurado_dao = new JuradoDAO();
+		jurado_dao.insertar(jurado);
+	}
+	
+	/**
+	 * Metodo para la persistencia de un jurado en la base de datos.
+	 * 
+	 * @param jurado
+	 *            Parametro del tipo Jurado
+	 *            
+	 */
+	public void guardarJurado(Jurado jurado) {
+		IJurado jurado_dao = new JuradoDAO();
+		jurado_dao.insertar(jurado);
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los jurados
+	 * 
+	 * @return
+	 * 				Lista de objeto jurado
+	 */
+	public List<Jurado> listarJurados() {
+		IJurado jurado_dao = new JuradoDAO();
+		return jurado_dao.devolverJurados();
+	}
+	
+	/**
+	 * Metodo que elimina un jurado
+	 * 
+	 * @param id
+	 * 			Variable de tipo int
+	 */
+	public void eliminarJurado(int id) {
+		IJurado jurado_dao = new JuradoDAO();
+		jurado_dao.eliminar(id);
+	}
+	
+	/**
+	 * Metodo que modifica un jurado
+	 * 
+	 * @param jurado
+	 * 			Variable de tipo Jurado
+	 */
+	public void modificarJurado(Jurado jurado) {
+		IJurado jurado_dao = new JuradoDAO();
+		jurado_dao.modificar(jurado);
+	}
+	
+	public void modificarJurado(int id_jurado, String nombre, String apellido) {
+		IJurado juradoDAO = new JuradoDAO();
+		Jurado jurado = juradoDAO.jurado(id_jurado);
+		jurado.setNombre(nombre);
+		jurado.setApellido(apellido);
+		juradoDAO.modificar(jurado);
+	}
+	
+	// ================================================================
+	// PREMIO
+	// ================================================================
+
+	/**
+	* Metodo para la creacion de un premio con nombre.
+	* 
+	* @param nombre
+	*            Parametro para el nombre
+	*            
+	* @return Premio
+	* 
+	*/
+	public Premio crearPremio(String nombre) {
+		IPremio premio_dao = new PremioDAO();
+		Premio premio = new Premio(nombre);
+		premio_dao.insertar(premio);
+		premio = premio_dao.premio(nombre);
+		return premio;
+	}
+		
+	/**
+	* Metodo para la creacion de un premio con nombre e id.
+	* 
+	* @param nombre
+	*            Parametro para el nombre
+	*            
+	*  @param id
+	*            Parametro para el id
+	*            
+	* @return Premio
+	* 
+	*/
+	public Premio crearPremio(int id, String nombre) {
+		IPremio premio_dao = new PremioDAO();
+		Premio premio = new Premio(id,nombre);
+		premio_dao.insertar(premio);
+//		premio_dao.insertar(premio);
+//		Premio premio = premio_dao.premio(id);
+//		Premio premio = new Premio(id, nombre);
+		return premio;
+	}
+	
+	public Premio modificarPremio(int id, String nombre) {
+		IPremio premio_dao = new PremioDAO();
+//		premio_dao.insertar(premio);
+		Premio premio = premio_dao.premio(id);
+		premio.setNombre(nombre);
+		premio_dao.modificar(premio);
+//		Premio premio = new Premio(id, nombre);
+		return premio;
+	}
+	
+//	public Premio modificarPremio(int valueAt, String string) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+	/**
+	* Metodo para la persistencia de un premio en la base de datos.
+	* 
+	* @param premio
+	*            Parametro del tipo Premio
+	*            
+	*/
+	public void nuevoPremio(Premio premio) {
+		IPremio premio_dao = new PremioDAO();
+		premio_dao.insertar(premio);
+	}
+		
+	/**
+	* Metodo que devuelve verdadero si existe un premio con ese nombre en la base de datos
+	* 
+	* @param nombre
+	* 			variable de tipo String
+	* 
+	* @return booleano
+	* 			Devuelve verdadero si ya existe, devuelve falso sino
+	*/
+	public boolean existePremio(String nombre) {
+		IPremio premio_dao = new PremioDAO();
+		if (premio_dao.verificarExistente(nombre) ) {
+			return true;
+		}
+		return false;
+	}
+		
+	/**
+	* Metodo que devuelve un listado de todos los premios
+	* 
+	* @return
+	* 				Lista de objeto categoria
+	*/
+	public List<Premio> listarPremios() {
+		IPremio premio_dao = new PremioDAO();
+		return premio_dao.devolverPremios();
+	}
+		
+	/**
+	* Metodo que elimina un premio
+	* 
+	* @param id
+	* 			Variable de tipo int
+	*/
+	public void eliminarPremio(int id) {
+		IPremio premio_dao = new PremioDAO();
+		premio_dao.eliminar(id);
+	}
+		
+	/**
+	* Metodo que modifica un premio
+	* 
+	* @param premio
+	* 			Variabl de tipo Premio
+	*/
+	public void modificarPremio(Premio premio) {
+		IPremio premio_dao = new PremioDAO();
+		premio_dao.modificar(premio);
+	}
+	
+	// ================================================================
+	// CONCURSO
+	// ================================================================
+
+	/**
+	* Metodo para la creacion de un concurso.
+	* 
+	* @param nombre
+	*            Parametro para el nombre
+	* @param codigo
+	*            Parametro para el codigo
+	* @param hashtag
+	*            Parametro para el hashtag
+	* @param categoria
+	* 			Parametro de tipo categoria
+	* @param fechaInicioInscripcion
+	* 			Parametro de tipo LocalDate
+	* @param fechaCierreInscripcion
+	* 			Parametro de tipo LocalDate
+	* @param fechaInicioPublicacion
+	* 			Parametro de tipo LocalDate
+	* @param fechaCierrePublicacion
+	* 			Parametro de tipo LocalDate
+	* @param horaInicioInscripcion
+	* 			Parametro de tipo int
+	* @param horaFinInscripcion
+	* 			Parametro de tipo int
+	* @param horaInicioPublicacion
+	* 			Parametro de tipo int
+	* @param horaFinPublicacion
+	* 			Parametro de tipo int
+	*    
+	* @return Concurso
+	* 
+	*/
+	public Concurso crearConcurso(String codigo, String nombre, String hashtag, Categoria categoria, LocalDate fechaInicioInscripcion,
+			LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion,
+			int horaFinInscripcion, int horaInicioPublicacion, int horaFinPublicacion) {
+		Concurso concurso = new Concurso(codigo, nombre, hashtag, categoria, fechaInicioInscripcion, fechaCierreInscripcion,
+				fechaInicioPublicacion, fechaCierrePublicacion, horaInicioInscripcion, horaFinInscripcion, horaInicioPublicacion,
+				horaFinPublicacion);
+		return concurso;
+	}
+	
+	/**
+	* Metodo para la creacion de un concurso con solo id.
+	* 
+	* @param id
+	*            parametro de tipo int
+	*    
+	* @return Concurso
+	* 
+	*/
+	public Concurso crearConcurso(int id) {
+		Concurso concurso = new Concurso(id);
+		return concurso;
+	}
+	
+	/**
+	* Metodo para la creacion de un concurso con solo Nnombre e id.
+	* 
+	* @param nombre
+	*            parametro de tipo String
+	* 
+	* @param id
+	*            parametro de tipo int
+	*    
+	* @return Concurso
+	* 
+	*/
+	public Concurso crearConcurso(int id, String nombre) {
+		Concurso concurso = new Concurso(id, nombre);
+		return concurso;
+	}
+		
+	/**
+	* Metodo para la creacion de un concurso con id.
+	* 
+	* @param id
+	*            Parametro para el int
+	* @param nombre
+	*            Parametro para el nombre
+	* @param codigo
+	*            Parametro para el codigo
+	* @param hashtag
+	*            Parametro para el hashtag
+	* @param categoria
+	* 			Parametro de tipo categoria
+	* @param fechaInicioInscripcion
+	* 			Parametro de tipo LocalDate
+	* @param fechaCierreInscripcion
+	* 			Parametro de tipo LocalDate
+	* @param fechaInicioPublicacion
+	* 			Parametro de tipo LocalDate
+	* @param fechaCierrePublicacion
+	* 			Parametro de tipo LocalDate
+	* @param horaInicioInscripcion
+	* 			Parametro de tipo int
+	* @param horaFinInscripcion
+	* 			Parametro de tipo int
+	* @param horaInicioPublicacion
+	* 			Parametro de tipo int
+	* @param horaFinPublicacion
+	* 			Parametro de tipo int
+	* @param corregido
+	* 			Variable de tipo boolean
+	*    
+	* @return Concurso
+	* 
+	*/
+	public Concurso crearConcurso(int id, String codigo, String nombre, String hashtag, Categoria categoria, LocalDate fechaInicioInscripcion,
+			LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion,
+			int horaFinInscripcion, int horaInicioPublicacion, int horaFinPublicacion, boolean corregido) {
+		Concurso concurso = new Concurso(id, codigo, nombre, hashtag, categoria, fechaInicioInscripcion, fechaCierreInscripcion,
+				fechaInicioPublicacion, fechaCierrePublicacion, horaInicioInscripcion, horaFinInscripcion, horaInicioPublicacion,
+				horaFinPublicacion, corregido);
+			IConcurso concurso_dao = new ConcursoDAO();
+			concurso_dao.insertar(concurso);
+		return concurso;
+	}
+	
+	/**
+	 * Metodo para la persistencia de un concurso en la base de datos.
+	 * 
+	 * @param concurso
+	 *            Parametro del tipo Concurso
+	 *            
+	 */
+	public void nuevoConcurso(Concurso concurso) {
+		IConcurso concurso_dao = new ConcursoDAO();
+		concurso_dao.insertar(concurso);
+	}
+	
+//	/**
+//	 * Metodo que devuelve verdadero si existe un concurso con ese codigo en la base de datos
+//	 * 
+//	 * @param codigo
+//	 * 			variable de tipo String
+//	 * 
+//	 * @return booleano
+//	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+//	 */
+//	public boolean existeConcurso(String codigo) {
+//		IConcurso concurso_dao = new ConcursoDAO();
+//		if (concurso_dao.verificarExistente(codigo)) {
+//			return true;
+//		}
+//		return false;
+//	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los concursos
+	 * 
+	 * @return 
+	 * 				Lista de objeto Concurso
+	 */
+	public List<Concurso> listarConcursos() {
+		IConcurso concurso_dao = new ConcursoDAO();
+		return concurso_dao.devolverConcursos();
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los concursos con pubicacion abierta
+	 * @param id_participante
+	 * 				Variable de tipo int
+	 * @return
+	 * 				Lista de objeto Concurso
+	 */
+	public List<Concurso> listarConcursosConPublicacionAbierta(int id_participante) {
+		IConcurso concurso_dao = new ConcursoDAO();
+		return concurso_dao.listarConcursosConPublicacionAbierta(id_participante);
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los concursos con inscripcion abierta
+	 * 
+	 * @return
+	 * 				Lista de objeto concurso
+	 */
+	public List<Concurso> listarConcursosConInscripcionAbierta() {
+		IConcurso concurso_dao = new ConcursoDAO();
+		return concurso_dao.listarConcursosConInscripcionAbierta();
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los concursos con inscripcion abiera que se inscribio
+	 * @param id_participante
+	 * 		Cariable de tipo int
+	 * @return 
+	 * 		Lista de objeto concurso
+	 */
+	public List<Concurso> listarConcursosParticipanteInscripto(int id_participante) {
+		IConcurso concurso_dao = new ConcursoDAO();
+		return concurso_dao.listarConcursosParticipanteInscripto(id_participante);
+	}
+	
+	/**
+	 * Metodo que elimina un concurso
+	 * 
+	 * @param id
+	 * 			Variable de tipo int
+	 */
+	public void eliminarConcurso(int id) {
+		IConcurso concurso_dao = new ConcursoDAO();
+		concurso_dao.eliminar(id);
+	}
+	
+	/**
+	 * Metodo que modifica un concurso
+	 * 
+	 * @param concurso
+	 * 			Variable de tipo Concurso
+	 */
+	public void modificarConcurso(Concurso concurso, String categoria) {
+		this.existeCategoria(categoria);
+		
+		IConcurso concurso_dao = new ConcursoDAO();
+		concurso_dao.modificar(concurso);
+	}
+	
+	/**
+	 * Metodo que le asignar el puntaje y el jurado a las publicaciones
+	 * @param publicaciones
+	 * 			variable lista de publicaciones
+	 * @param jurado
+	 * 			variable tipo Jurado
+	 */
+	public void corregirPublicaciones(List<Publicacion> publicaciones, Jurado jurado) {
+		IPublicacion publicacion_dao = new PublicacionDAO();
+		// Le asigno el jurado y el puntaje a las publicaciones
+		for (Publicacion publicacion : publicaciones) {
+			publicacion_dao.asignarJuradoPuntaje(publicacion.getPuntaje(), publicacion.getId(), jurado.getId());
+		}
+	}
+	
+	
+	
+	
+	//===================================================
+	// PUESTO
+	//===================================================
+	
+	/**
+	 * Metodo para la creacion de un puesto con posicion, concurso y premio.
+	 * 
+	 * @param posicion
+	 *            Parametro de tipo String
+	 *            
+	 * @param concurso
+	 * 				Parametro de tipo Concurso
+	 * 
+	 * @param premio
+	 * 				Parametro de tipo Premio
+	 *            
+	 * @return Puesto
+	 * 
+	 */
+	public Puesto crearPuesto(String posicion, Concurso concurso, Premio premio) {
+
+		Puesto puesto = new Puesto(posicion, concurso, premio);
+		IPuesto puesto_dao = new PuestoDAO();
+		puesto_dao.insertar(puesto);
+		return puesto;
+	}
+	
+	/**
+	 * Metodo que devuelve verdadero si existe un puesto con ese nombre en la base de datos
+	 * 
+	 * @param puesto
+	 * 			puesto a evaluar si ya existe en la base de datos
+	 * 
+	 * @return booleano
+	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+	 */
+	public boolean existePuesto(Puesto puesto) {
+		IPuesto puesto_dao = new PuestoDAO();
+		if (puesto_dao.verificarExistente(puesto.getConcurso().getId(), puesto.getPosicion())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Metodo para la persistencia de un puesto en la base de datos.
+	 * 
+	 * @param puesto
+	 *            Parametro del tipo Puesto
+	 *            
+	 */
+	public void guardarPuesto(Puesto puesto) {
+		IPuesto puesto_dao = new PuestoDAO();
+		puesto_dao.insertar(puesto);
+	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los puestos
+	 * 
+	 * @param id
+	 * 				Variable de tipo int
+	 * 
+	 * @return
+	 * 			Lista de objeto puesto
+	 */
+	public List<Puesto> listarPuestos(int id) {
+		IPuesto puesto_dao = new PuestoDAO();
+		return puesto_dao.puestos(id);
+	}
+	
+	/**
+	 * Metodo que elimina una posicion de un concurso
+	 * 
+	 * @param id
+	 * 			Variable de tipo int
+	 * @param id_concurso
+	 * 			Variable de tipo int
+	 */
+	public void eliminarPuesto(int id, int id_concurso) {
+		IPuesto puesto_dao = new PuestoDAO();
+		puesto_dao.eliminar(id, id_concurso);
+	}
+	
+	public void asignarGanador(int id_concurso, int id_puesto, int id_participante) {
+		
+		
+		
+		IConcurso concurso_dao = new ConcursoDAO();	
+		IPuesto puesto_dao = new PuestoDAO();
+		Concurso concurso = concurso_dao.concursoDadoId(id_concurso);
+		
+//		if (this.estadoConcurso(concurso)) {
+//			throw new RuntimeException ("el concurso ya se encuentra evauluado");
+//		}
+		// Seteo el "corregido" a true
+		concurso_dao.corregir(id_concurso);
+		
+		// Asigno a los puestos los ganadores
+		puesto_dao.asignarGanador(id_puesto, id_participante);
+	}
+	
+	//====================================================
+	// INSCRIPCION
+	//====================================================
+	/**
+	 * Metodo para la creacion de una inscripcion.
+	 * 
+	 * @param concurso
+	 *            Parametro del tipo Concurso
+	 *            
+	 * @param participante
+	 * 				Parametro del tipo Participante
+	 *            
+	 * @return Inscripcion
+	 * 
+	 */
+//	public Inscripcion crearInscripcion(Concurso concurso, Participante participante) {
+//		Inscripcion inscripcion = new Inscripcion(concurso, participante);
+//		return inscripcion;
+//	}
+	
+	/**
+	 * Metodo para la persistencia de una inscripcion en la base de datos.
+	 * 
+	 * @param inscripcion
+	 *            Parametro del tipo Inscripcion
+	 *            
+	 */
+	public void nuevaInscripcion(Inscripcion inscripcion) {
+		IInscripcion inscripcion_dao = new InscripcionDAO();
+		inscripcion_dao.insertar(inscripcion);
+	}
+	
+	/**
+	 * Metodo que elimina una inscripcion
+	 * 
+	 * @param id_participante
+	 * 			Variable de tipo int
+	 * @param id_concurso
+	 * 			Variable de tipo int
+	 */
+	public void eliminarInscripcion(int id_participante, int id_concurso) {
+		IInscripcion inscripcion_dao = new InscripcionDAO();
+		inscripcion_dao.eliminar(id_participante, id_concurso);
+	}
+	
+//	/**
+//	 * Metodo que devuelve verdadero si existe una inscripcion en la base de datos
+//	 * 
+//	 * @param inscripcion
+//	 * 			inscripcion a evaluar si ya existe en la base de datos
+//	 * 
+//	 * @return booleano
+//	 * 			Devuelve verdadero si ya existe, devuelve falso sino
+//	 */
+//	public boolean existeInscripcion(Inscripcion inscripcion) {
+//		IInscripcion inscripcion_dao = new InscripcionDAO();
+//		if (inscripcion_dao.verificarExistente(inscripcion.getParticipante().getId(), inscripcion.getConcurso().getId())) {
+//			return true;
+//		}
+//		return false;
+//	}
+	
+	/**
+	 * Metodo que devuelve un listado de todos los concursos con inscripcion cerrada que se inscribio el participante
+	 * 
+	 * @param id_participante
+	 * 				Variable de tipo int
+	 * 
+	 * @return 
+	 * 				Lista de objeto concurso
+	 */
+	public List<Concurso> listarConcursosConInscripcionCerradaInscripto(int id_participante) {
+		IConcurso concurso_dao = new ConcursoDAO();
+		return concurso_dao.listarConcursosConInscripcionCerradaInscripto(id_participante);
+	}
+	
+	//======================================================================
+	//PUBLICACION
+	//======================================================================
+	
+	/**
+	 * 
+	 * @param participante
+	 * 				parametro de tipo Participante
+	 * @param concurso
+	 * 				parametro de tipo COncurso
+	 * @param texto
+	 * 				parametro de tipo String
+	 * @return
+	 * 				Publicacion
+	 */
+	public Publicacion crearPublicacion(Participante participante, Concurso concurso, String texto){
+		Publicacion publicacion = new Publicacion(participante, concurso, texto);
+		return publicacion;
+	}
+	
+	/**
+	 * Metodo que crea una publicaicon con id, texto y puntaje
+	 * @param id
+	 * 				parametro de tipo int
+	 * @param texto
+	 * 				parametro de tipo int
+	 * @param puntaje
+	 * 				parametro de tipo int
+	 * @return
+	 * 				Publicacion
+	 */
+	public Publicacion crearPublicacion(int id, String texto, int puntaje){
+		Publicacion publicacion = new Publicacion(id, texto, puntaje);
+		return publicacion;
+	}
+	
+	/**
+	 * Metodo que agrega una publicacion
+	 * 
+	 * @param publicacion
+	 * 			variable de tipo Publicacion
+	 */
+	public void agregarPublicacion(Publicacion publicacion) {
+		IPublicacion publicacion_dao = new PublicacionDAO();
+		publicacion_dao.insertar(publicacion);
+	}
+	
+	/**
+	 * Metodo que devuelve las publicaciones de los concursos que ya termino su fecha de subida de publicacion
+	 * @param id_concurso
+	 * 				variable de tipo int
+	 * @param id_participante
+	 * 				variable de tipo int
+	 * @return List
+	 */
+	public List<Publicacion> listarPublicacionesAntiguas(int id_concurso, int id_participante) {
+		IPublicacion publicacion_dao= new PublicacionDAO();
+		return publicacion_dao.devolverPublicacionesAntiguas(id_concurso, id_participante);
+	}
+	
+	/**
+	 * Metodo que devuelve las publicaciones de los concursos que ya termino su fecha de subida de publicacion
+	 * @param id_concurso
+	 * 				variable de tipo int
+	 * @param id_participante
+	 * 				variable de tipo int
+	 * @return List
+	 * 				devuelve lista de publicaciones
+	 */
+	public List<Publicacion> listarPublicacionesConcurso(int id_concurso, int id_participante) {
+		IPublicacion publicacion_dao= new PublicacionDAO();
+		return publicacion_dao.listarPublicacionesConcurso(id_concurso, id_participante);
+	}
+	
+	/**
+	 * Metodo que elimina una publicacion
+	 * 
+	 * @param id
+	 * 			Variable de tipo int
+	 */
+	public void eliminarPublicacion(int id) {
+		IPublicacion publicacion_dao = new PublicacionDAO();
+		publicacion_dao.eliminar(id);
+	}
+	
+	//===========================================================
+	// TWITTER
+	//===========================================================
+	
+	/**
+	 * Metodo que publica los ganadores de los concursos cuando se termina de
+	 * evaluar.
+	 *
+	 * @param texto
+	 *            parametro del tipo String
+	 */
+	public void publicarTweetRanking(String texto) {
+		ITwitter twitter = new TwitterDAO();
+		twitter.publicar(texto);
+	}
+
+	public boolean estadoConcurso(Concurso concurso) {
+		IConcurso concursoDAO = new ConcursoDAO();
+		return concursoDAO.estadoConcurso(concurso);
+	}
+
+//	public void inscribirParticipante(int concursoCodigo, Participante participante) {
+//		
+//		IConcurso concursoDAO = new ConcursoDAO();
+//		Concurso concurso = concursoDAO.concurso(concursoCodigo);
+//		
+//		concurso.inscribirParticipante(participante);
+//		concursoDAO.nuevaInscripcion(concurso);
+//	}
+
+	public void nuevaPublicacion(int concursoCodigo, Participante participante, String text) {
+		
+		Publicacion publicacion = new Publicacion(text);
+		IConcurso concursoDAO = new ConcursoDAO();
+		Concurso concurso = concursoDAO.concursoDadoId(concursoCodigo);
+		
+		concurso.agregarNuevaPublicacion(participante, publicacion);
+		
+		IPublicacion publicacionDAO = new PublicacionDAO();
+		publicacionDAO.insertar(concurso.ultimaPublicacion());
+		
+	}
+
+	public List<Participante> listarNoParticipantesPorSeleccion(String seleccion) {
+		IParticipante participante_dao = new ParticipanteDAO();
+		return participante_dao.noParticipantesPorSeleccion(seleccion);
+	}
+
+	public void eliminarInscripcion(int id_participante, String concurso) {
+		// TODO Auto-generated method stub
+		IConcurso concurso_dao = new ConcursoDAO();
+		Concurso concurso1 = concurso_dao.concurso(concurso);
+		concurso1.eliminarInscripcion(id_participante);
+		IInscripcion inscripcion_dao = new InscripcionDAO();
+		inscripcion_dao.eliminar(id_participante, concurso);
+	}
+
+//	public void inscribirParticipante(String concursoNombre, Participante participante) {
+//		// TODO Auto-generated method stub
+//		
+//			
+//			IConcurso concursoDAO = new ConcursoDAO();
+//			Concurso concurso = concursoDAO.concurso(concursoNombre);
+//			
+//			concurso.inscribirParticipante(participante);
+//			concursoDAO.nuevaInscripcion(concurso);
+//		
+//	}
+
+	public void inscribirParticipante(String codigoConcurso, int id_participante) {
+		
+		IParticipante participanteDAO = new ParticipanteDAO();
+		Participante participante = participanteDAO.participante(id_participante);
+		IConcurso concursoDAO = new ConcursoDAO();
+		Concurso concurso = concursoDAO.concurso(codigoConcurso);
+		concurso.inscribirParticipante(participante);
+		concursoDAO.nuevaInscripcion(concurso.ultimoInscripto());
+	}
+
+	public Concurso crearConcurso(int id, String codigo, String nombre, String hashtag, String nombreCategoria,
+			LocalDate fechaInicioInscripcion, LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion, int horaFinInscripcion,
+			int horaInicioPublicacion, int horaFinPublicacion, Boolean estado) {
+			ICategoria categoriaDAO = new CategoriaDAO();
+			Categoria categoria = categoriaDAO.categoria(nombreCategoria);
+			Concurso concurso = new Concurso(id, codigo, nombre, hashtag, categoria, fechaInicioInscripcion, fechaCierreInscripcion,
+				fechaInicioPublicacion, fechaCierrePublicacion, horaInicioInscripcion, horaFinInscripcion, horaInicioPublicacion,
+				horaFinPublicacion, estado);
+			IConcurso concurso_dao = new ConcursoDAO();
+			concurso_dao.insertar(concurso);
+		return concurso;
+	}
+
+	public void modificarConcurso(int id, String codigo, String nombre, String hashtag, String nombreCategoria,
+			LocalDate fechaInicioInscripcion, LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion, int horaFinInscripcion,
+			int horaInicioPublicacion, int horaFinPublicacion, Boolean estado) {
+		// TODO Auto-generated method stub
+		IConcurso concursoDAO = new ConcursoDAO();
+		Concurso concurso = concursoDAO.concursoDadoId(id);
+		
+		ICategoria categoriaDAO = new CategoriaDAO();
+		Categoria categoria = categoriaDAO.categoria(nombreCategoria);
+		
+		concurso.setCodigo(codigo);
+		concurso.setNombre(nombre);
+		concurso.setHashtag(hashtag);
+		concurso.setCategoria(categoria);
+		concurso.setAperturaInscripcion(fechaInicioInscripcion);
+		concurso.setCierreInscripcion(fechaCierreInscripcion);
+		concurso.setAperturaPublicacion(fechaInicioPublicacion);
+		concurso.setCierrePublicacion(fechaCierrePublicacion);
+		concurso.setHoraAperturaInscripcion(horaInicioInscripcion);
+		concurso.setHoraFinInscripcion(horaFinInscripcion);
+		concurso.setHoraAperturaPublicacion(horaInicioPublicacion);
+		concurso.setHoraFinPublicacion(horaFinPublicacion);
+//		concurso.setCorregido(estado);
+		concursoDAO.modificar(concurso);
+		
+	}
+
+	public Concurso concurso(String codigo) {
+		// TODO Auto-generated method stub
+		IConcurso concursoDAO = new ConcursoDAO();
+		Concurso concurso = concursoDAO.concurso(codigo);
+		return concurso;
+	}
+
+	
+
+	
+
+	
+
+	
+
+//	public Puesto_Administrar puesto_administrar(Api api, String idioma, int valueAt) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
+	
+
+}
