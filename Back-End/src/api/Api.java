@@ -127,7 +127,14 @@ public class Api {
 		categoria_dao.eliminar(id);
 	}
 	
-	
+	/**
+	 * Metodo que modifica una categoria
+	 * 
+	 * @param id
+	 * 			Variable de tipo int
+	 * @param nombre
+	 * 			Variable de tipo String
+	 */
 	public void modificarCategoria(int id, String nombre) {
 		// TODO Auto-generated method stub
 		ICategoria categoria_dao = new CategoriaDAO();
@@ -861,9 +868,18 @@ public class Api {
 		puesto_dao.eliminar(id, id_concurso);
 	}
 	
+	
+	/**
+	 * Metodo que asigna un participante a un puesto dado en un concurso dado
+	 * 
+	 * @param id_puesto
+	 * 			Variable de tipo int
+	 * @param id_concurso
+	 * 			Variable de tipo int
+	 * *@param id_participante
+	 * 			Variable de tipo int
+	 */
 	public void asignarGanador(int id_concurso, int id_puesto, int id_participante) {
-		
-		
 		
 		IConcurso concurso_dao = new ConcursoDAO();	
 		IPuesto puesto_dao = new PuestoDAO();
@@ -918,6 +934,14 @@ public class Api {
 	}
 	
 
+	/**
+	 * Metodo que lista todos los concursos que han hecho un apertura o cierre de publicaciones
+	 * 
+	 * @param id_participante
+	 * 			Variable de tipo int
+	 * @param id_concurso
+	 * 			Variable de tipo int
+	 */
 	public List<Concurso> listarConcursosPublicacionAbiertaYcerrada(int id_participante) {
 		IConcurso concurso_dao = new ConcursoDAO();
 		return concurso_dao.listaConcursoPublicacionAbiertaYcerradasInscripto(id_participante);
@@ -1024,17 +1048,33 @@ public class Api {
 		twitter.publicar(texto);
 	}
 
+	/**
+	 * Metodo que determina si un concurso fue resuelto
+	 *
+	 * @param concurso
+	 *            parametro del tipo Concurso
+	 */
 	public boolean estadoConcurso(Concurso concurso) {
 		IConcurso concursoDAO = new ConcursoDAO();
 		return concursoDAO.estadoConcurso(concurso);
 	}
 
 
-	public void nuevaPublicacion(int concursoCodigo, Participante participante, String text) {
+	/**
+	 * Metodo que crea una nueva publicacion dado un participante, un concurso y un texto
+	 *
+	 * @param id_concurso
+	 *            parametro del tipo Concurso
+	 * @param participante
+	 *            parametro del tipo Participante
+	 * @param text
+	 * 			  parametro del tipo String
+	 */
+	public void nuevaPublicacion(int id_concurso, Participante participante, String text) {
 		
 		Publicacion publicacion = new Publicacion(text);
 		IConcurso concursoDAO = new ConcursoDAO();
-		Concurso concurso = concursoDAO.concursoDadoId(concursoCodigo);
+		Concurso concurso = concursoDAO.concursoDadoId(id_concurso);
 		
 		concurso.agregarNuevaPublicacion(participante, publicacion);
 		
@@ -1042,22 +1082,48 @@ public class Api {
 		publicacionDAO.insertar(concurso.ultimaPublicacion());
 		
 	}
+	
+	/**
+	 * Metodo que devuelve una lista con los participantes que no estan inscriptos a un concurso dado
+	 *
+	 * @param codigoConcurso
+	 *            parametro del tipo String
+	 */
 
-	public List<Participante> listarNoParticipantesPorSeleccion(String seleccion) {
+	public List<Participante> listarNoParticipantesPorSeleccion(String codigoConcurso) {
 		IParticipante participante_dao = new ParticipanteDAO();
-		return participante_dao.noParticipantesPorSeleccion(seleccion);
+		return participante_dao.noParticipantesPorSeleccion(codigoConcurso);
 	}
+	
+	
+	/**
+	 * Metodo que elimina una inscripcion dado un participante y un concurso
+	 *
+	 * @param id_participante
+	 *            parametro del tipo int
+	 * @param codigoConcurso
+	 *            parametro del tipo String
+	 */
 
-	public void eliminarInscripcion(int id_participante, String concurso) {
+	public void eliminarInscripcion(int id_participante, String codigoConcurso) {
 		// TODO Auto-generated method stub
 		IConcurso concurso_dao = new ConcursoDAO();
-		Concurso concurso1 = concurso_dao.concurso(concurso);
+		Concurso concurso1 = concurso_dao.concurso(codigoConcurso);
 		concurso1.eliminarInscripcion(id_participante);
 		IInscripcion inscripcion_dao = new InscripcionDAO();
-		inscripcion_dao.eliminar(id_participante, concurso);
+		inscripcion_dao.eliminar(id_participante, codigoConcurso);
 	}
 
 
+	/**
+	 * Metodo que inscribe a un participante a un concurso dado un participante y un concurso
+	 *
+	 * @param codigoConcurso
+	 *            parametro del tipo String
+	 * @param id_participante
+	 *            parametro del tipo int
+	 */
+	
 	public void inscribirParticipante(String codigoConcurso, int id_participante) {
 		
 		IParticipante participanteDAO = new ParticipanteDAO();
@@ -1068,6 +1134,39 @@ public class Api {
 		concursoDAO.nuevaInscripcion(concurso.ultimoInscripto());
 	}
 
+	/**
+	 * Metodo que crea un concurso
+	 *
+	 * @param id
+	 *            parametro del tipo int
+	 * @param codigo
+	 *            parametro del tipo String
+	 * @param nombre
+	 *            parametro del tipo String
+	 * @param hashtag
+	 *            parametro del tipo String
+	 * @param nombreCategoria
+	 *            parametro del tipo String
+	 * @param fechaInicioInscripcion
+	 *            parametro del tipo LocalDate
+	 * @param fechaCierreInscripcion
+	 *            parametro del tipo LocalDate
+	 * @param fechaInicioPublicacion
+	 *            parametro del tipo LocalDate
+	 * @param fechaCierrePublicacion
+	 *            parametro del tipo LocalDate
+	 * @param horaInicioInscripcion
+	 * 			   parametro del tipo int
+	 * @param horaFinInscripcion
+	 * 			   parametro del tipo int
+	 * @param horaInicioPublicacion
+	 * 			   parametro del tipo int
+	 * @param horaFinPublicacion
+	 * 			   parametro del tipo int
+	 * @param estado
+	 * 				parametro del tipo Boolean
+	 */
+	
 	public Concurso crearConcurso(int id, String codigo, String nombre, String hashtag, String nombreCategoria,
 			LocalDate fechaInicioInscripcion, LocalDate fechaCierreInscripcion, LocalDate fechaInicioPublicacion, LocalDate fechaCierrePublicacion, int horaInicioInscripcion, int horaFinInscripcion,
 			int horaInicioPublicacion, int horaFinPublicacion, Boolean estado) {

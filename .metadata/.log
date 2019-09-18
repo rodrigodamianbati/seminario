@@ -13918,3 +13918,65 @@ java.lang.NullPointerException
 	at org.eclipse.jdt.internal.compiler.Compiler.process(Compiler.java:892)
 	at org.eclipse.jdt.internal.compiler.ProcessTaskManager.run(ProcessTaskManager.java:145)
 	at java.lang.Thread.run(Thread.java:748)
+
+!ENTRY org.eclipse.core.resources 4 2 2019-09-17 08:36:10.467
+!MESSAGE Problems occurred when invoking code from plug-in: "org.eclipse.core.resources".
+!STACK 0
+java.lang.NullPointerException
+	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:565)
+	at java.lang.StringBuffer.append(StringBuffer.java:357)
+	at org.eclipse.jdt.internal.compiler.lookup.ParameterizedTypeBinding.shortReadableName(ParameterizedTypeBinding.java:1267)
+	at org.eclipse.jdt.internal.compiler.lookup.ParameterizedTypeBinding.shortReadableName(ParameterizedTypeBinding.java:1259)
+	at org.eclipse.jdt.internal.compiler.problem.ProblemReporter.typeMismatchError(ProblemReporter.java:8278)
+	at org.eclipse.jdt.internal.compiler.ast.LocalDeclaration.resolve(LocalDeclaration.java:401)
+	at org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration.resolveStatements(AbstractMethodDeclaration.java:641)
+	at org.eclipse.jdt.internal.compiler.ast.MethodDeclaration.resolveStatements(MethodDeclaration.java:316)
+	at org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration.resolve(AbstractMethodDeclaration.java:551)
+	at org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.resolve(TypeDeclaration.java:1262)
+	at org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.resolve(TypeDeclaration.java:1387)
+	at org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration.resolve(CompilationUnitDeclaration.java:652)
+	at org.eclipse.jdt.internal.compiler.Compiler.process(Compiler.java:892)
+	at org.eclipse.jdt.internal.compiler.ProcessTaskManager.run(ProcessTaskManager.java:145)
+	at java.lang.Thread.run(Thread.java:748)
+
+!ENTRY org.eclipse.core.resources 4 75 2019-09-17 08:36:10.481
+!MESSAGE Errors occurred during the build.
+!SUBENTRY 1 org.eclipse.jdt.core 4 75 2019-09-17 08:36:10.481
+!MESSAGE Errors running builder 'Java Builder' on project 'Back-End'.
+!STACK 0
+java.lang.NullPointerException
+	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:565)
+	at java.lang.StringBuffer.append(StringBuffer.java:357)
+	at org.eclipse.jdt.internal.compiler.lookup.ParameterizedTypeBinding.shortReadableName(ParameterizedTypeBinding.java:1267)
+	at org.eclipse.jdt.internal.compiler.lookup.ParameterizedTypeBinding.shortReadableName(ParameterizedTypeBinding.java:1259)
+	at org.eclipse.jdt.internal.compiler.problem.ProblemReporter.typeMismatchError(ProblemReporter.java:8278)
+	at org.eclipse.jdt.internal.compiler.ast.LocalDeclaration.resolve(LocalDeclaration.java:401)
+	at org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration.resolveStatements(AbstractMethodDeclaration.java:641)
+	at org.eclipse.jdt.internal.compiler.ast.MethodDeclaration.resolveStatements(MethodDeclaration.java:316)
+	at org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration.resolve(AbstractMethodDeclaration.java:551)
+	at org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.resolve(TypeDeclaration.java:1262)
+	at org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.resolve(TypeDeclaration.java:1387)
+	at org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration.resolve(CompilationUnitDeclaration.java:652)
+	at org.eclipse.jdt.internal.compiler.Compiler.process(Compiler.java:892)
+	at org.eclipse.jdt.internal.compiler.ProcessTaskManager.run(ProcessTaskManager.java:145)
+	at java.lang.Thread.run(Thread.java:748)
+!SESSION 2019-09-17 11:04:02.143 -----------------------------------------------
+eclipse.buildId=4.11.0.I20190307-0500
+java.version=1.8.0_222
+java.vendor=Private Build
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=es_AR
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.core 1 0 2019-09-17 11:04:17.310
+!MESSAGE Using Apache MINA sshd as ssh client.
+!SESSION 2019-09-17 20:12:08.199 -----------------------------------------------
+eclipse.buildId=4.11.0.I20190307-0500
+java.version=1.8.0_222
+java.vendor=Private Build
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=es_AR
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.core 1 0 2019-09-17 20:12:25.161
+!MESSAGE Using Apache MINA sshd as ssh client.

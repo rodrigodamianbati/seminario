@@ -46,7 +46,7 @@ public class Principal extends JFrame {
 	}
 
 	public Principal() {
-		// Le asigno por defecto el idioma español
+		// Le asigno por defecto el idioma espaniol
 		this.bundle = ResourceBundle.getBundle("properties/mensajes_es_AR");
 		this.idioma = "properties/mensajes_es_AR";
 		
@@ -130,7 +130,7 @@ public class Principal extends JFrame {
 		comboBox = new JComboBox<String>();
 		comboBox.setBounds(427, 231, 120, 20);
 		contentPane.add(comboBox);
-		comboBox.addItem(bundle.getString("lenguaje.español"));
+		comboBox.addItem(bundle.getString("lenguaje.espaniol"));
 		comboBox.addItem(bundle.getString("lenguaje.ingles"));
 				
 		// El comboBox queda "escuchando" cada vez que se cambia el elemento seleccionado
@@ -187,7 +187,7 @@ public class Principal extends JFrame {
 	 */
 	private void modificarComboBox(String idioma) {
 		comboBox.removeAllItems();
-		comboBox.addItem(bundle.getString("lenguaje.español"));
+		comboBox.addItem(bundle.getString("lenguaje.espaniol"));
 		comboBox.addItem(bundle.getString("lenguaje.ingles"));
 		if(idioma == "properties/mensajes_en_EN") {
 			comboBox.setSelectedIndex(1);

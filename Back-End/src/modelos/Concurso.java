@@ -273,7 +273,7 @@ public class Concurso {
 			throw new RuntimeException("No puede anotarse a este concurso, ya ha cerrado su incripcion!");
 		}
 		if (this.aperturaInscripcion.isAfter(LocalDate.now())) {
-			throw new RuntimeException("El concurso aun no ha abierto su incripción");
+			throw new RuntimeException("El concurso aun no ha abierto su incripcion");
 		}
 		if (this.aperturaInscripcion.isEqual(LocalDate.now())) {
 			if (this.horaAperturaInscripcion > LocalDateTime.now().getHour()) {
